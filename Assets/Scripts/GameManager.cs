@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+
+
 
 
 public class GameManager{
@@ -25,7 +28,6 @@ public class GameManager{
     // public Pawn[] blackPawns =  new Pawn[8];
 
     public Piece[] Board = new Piece[64];
-    private static GameManager _instance;
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE};
     private GameObject WhiteHand, BlackHand;
     public GameState gameState { get; private set; }
@@ -65,7 +67,7 @@ public class GameManager{
             path = 1;
         }
         for(int i = 0; i < 8; i++){
-            if(Board[(i+lTile)*path].GetType() == typeof(p)){
+            if(Board[(i+lTile)*path].GetType() == p.GetType()){
                 pathIsBlocked = true;
             }
 
@@ -97,7 +99,7 @@ public class GameManager{
         }
         foreach(int move in p.captureMoves){
             if(move == moveOffset){
-                if(Board[i].GetType() == typeof(p)){
+                if(Board[i].GetType() == p.GetType()){
                     //Check if King of same color is in check after move
                     if(!isKinginCheck){
                         canCapture = true;
