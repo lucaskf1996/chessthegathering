@@ -25,9 +25,15 @@ public class GameManager{
     // public Pawn[] blackPawns =  new Pawn[8];
 
     public Piece[] Board = new Piece[64];
+    private static GameManager _instance;
+    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE};
+    private GameObject WhiteHand, BlackHand;
+    public GameState gameState { get; private set; }
 
-    public static GameManager GetInstance(){
-        if(_instance == null){
+    public static GameManager GetInstance()
+    {
+        if(_instance == null)
+        {
             _instance = new GameManager();
         }
         return _instance;
@@ -111,4 +117,23 @@ public class GameManager{
 
     }
 
+    public void ChangeState(GameState nextState)
+    {
+        gameState = nextState;
+    }
+
+    private GameManager()
+    {
+        gameState = GameState.WHITEPAWNS;
+        WhiteHand = GameObject.Find("WhiteHand");
+        BlackHand = GameObject.Find("BlackHand");
+    }
+
+    public void PawnHand(int id){
+        
+    }
+
+    public void RandomHand(int id){
+
+    }
 }
