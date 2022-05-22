@@ -27,9 +27,12 @@ public class GameManager{
     // public Pawn[] whitePawns =  new Pawn[8];
     // public Pawn[] blackPawns =  new Pawn[8];
 
+    public Deck whiteDeck, blackDeck;
+    public List<Piece> whiteHand, blackHand;
+
     public Piece[] Board = new Piece[64];
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
-    private GameObject WhiteHand, BlackHand;
+    private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
 
     public static GameManager GetInstance()
@@ -121,21 +124,49 @@ public class GameManager{
 
     public void ChangeState(GameState nextState)
     {
+        if(nextState == GameState.WHITEPAWNS){
+            PawnHand(0);
+        }
         gameState = nextState;
     }
 
     private GameManager()
     {
         gameState = GameState.WHITEPAWNS;
-        WhiteHand = GameObject.Find("WhiteHand");
-        BlackHand = GameObject.Find("BlackHand");
+        WhiteHandTiles = GameObject.Find("WhiteHand");
+        BlackHandTiles = GameObject.Find("BlackHand");
+        whiteDeck = new Deck(0);
+        blackDeck = new Deck(1);
     }
 
     public void PawnHand(int id){
-        
+        if(id == 0){
+            whiteHand = whiteDeck.getPawns();
+        }
+        else{
+            blackHand = blackDeck.getPawns();
+        }
     }
 
     public void RandomHand(int id){
+        if(id == 0){
+            whiteHand = whiteDeck.getCards();
+        }
+        else{
+            blackHand = blackDeck.getCards();
+        }
+    }
 
+    public void ReturnHand(int id){
+        if(id == 0){
+            List<Piece> temp = whiteDeck.getCards();
+        }
+        else{
+            List<Piece> temp = blackDeck.getCards();
+        }
+    }
+
+    public void PlaceCards(int id){
+        
     }
 }

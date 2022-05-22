@@ -4,51 +4,66 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    public List<int> whiteDeck, blackDeck;
+    public List<Piece> deck;
+    public int id;
     // Start is called before the first frame update
-    void Start()
+    public Deck(int id)
     {
+        this.id = id;
         // 1 = pawn, 2 = knight, 3 = bishop, 4 = rook, 5 = queen
         for(int i = 0; i<15; i++){
-            whiteDeck.Add(1);
-            blackDeck.Add(1);
+            deck.Add(new Pawn(this.id));
         }
         for(int i = 0; i<4; i++){
-            whiteDeck.Add(2);
-            blackDeck.Add(2);
-            whiteDeck.Add(3);
-            blackDeck.Add(3);
-            whiteDeck.Add(4);
-            blackDeck.Add(4);
+            deck.Add(new Knight(this.id));
+            deck.Add(new Bishop(this.id));
+            deck.Add(new Rook(this.id));
         }
-        whiteDeck.Add(5);
-        blackDeck.Add(5);
-        whiteDeck.Add(5);
-        blackDeck.Add(5);
-
-        int n = whiteDeck.Count;
-        for (int i = 0; i < n; i++) {
-            int temp = whiteDeck[i];
-            int randomIndex = Random.Range(i, n);
-            whiteDeck[i] = whiteDeck[randomIndex];
-            whiteDeck[randomIndex] = temp;
-        }
-        for (int i = 0; i < n; i++) {
-            int temp = blackDeck[i];
-            int randomIndex = Random.Range(i, n);
-            blackDeck[i] = blackDeck[randomIndex];
-            blackDeck[randomIndex] = temp;
-        }
-
-        for(int i = 0; i<n; i++){
-            print(whiteDeck);
-        }
-        for(int i = 0; i<n; i++){
-            print(blackDeck);
+        deck.Add(new Queen(this.id));
+        deck.Add(new Queen(this.id));
+        for(int i = 0; i<deck.Count; i++){
+            print(deck);
         }
     }
 
-    public void getCards(){
-        print("test");
+    public List<Piece> getCards(){
+        List<Piece> temp;
+        if(deck.Count == 0){
+            temp = new List<Piece>{};
+        }
+        else if(deck.Count == 1){
+            temp = new List<Piece>{deck[0]};
+            deck.RemoveAt(0);
+        }
+        else if(deck.Count == 2){
+            temp = new List<Piece>{deck[0],deck[1]};
+            deck.RemoveAt(0);
+            deck.RemoveAt(1);
+        }
+        else{
+            temp = new List<Piece>{deck[0],deck[1],deck[2]};
+            deck.RemoveAt(0);
+            deck.RemoveAt(1);
+            deck.RemoveAt(2);
+        }
+        return temp;
+    }
+
+    private void returnedCards(List<Piece> returned){
+        for(int i = 0; i<returned.Count; i++){
+            deck.Add(returned[i]);
+        }
+        int n = deck.Count;
+        for (int i = 0; i < n; i++) {
+            Piece temp = deck[i];
+            int randomIndex = Random.Range(i, n);
+            deck[i] = deck[randomIndex];
+            deck[randomIndex] = temp;
+        }
+    }
+
+    public List<Piece> getPawns(){
+        List<Piece> temp = new List<Piece>{new Pawn(this.id),new Pawn(this.id),new Pawn(this.id)};
+        return temp;
     }
 }
