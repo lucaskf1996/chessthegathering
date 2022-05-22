@@ -14,18 +14,18 @@ public class GameManager{
     public King whiteKing = new King(0);
     public King blackKing = new King(1);
     public King ownKing;
-    // public Queen whiteQueen = new Queen(0);
-    // public Queen blackQueen = new Queen(1);
-    // public Bishop whiteBishop = new Bishop(0);
-    // public Bishop blackBishop = new Bishop(1);
-    // public Rook whiteRook = new Rook(0);
-    // public Rook blackRook = new Rook(1);
+    public Queen whiteQueen = new Queen(0);
+    public Queen blackQueen = new Queen(1);
+    public Bishop whiteBishop = new Bishop(0);
+    public Bishop blackBishop = new Bishop(1);
+    public Rook whiteRook = new Rook(0);
+    public Rook blackRook = new Rook(1);
     public Knight whiteKnight = new Knight(0);
     public Knight blackKnight = new Knight(1);
 
 
-    // public Pawn[] whitePawns =  new Pawn[8];
-    // public Pawn[] blackPawns =  new Pawn[8];
+    public Pawn[] whitePawns =  new Pawn[8];
+    public Pawn[] blackPawns =  new Pawn[8];
 
     public Deck whiteDeck, blackDeck;
     public List<Piece> whiteHand, blackHand;
