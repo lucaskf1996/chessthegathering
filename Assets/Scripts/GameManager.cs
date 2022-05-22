@@ -28,7 +28,7 @@ public class GameManager{
     // public Pawn[] blackPawns =  new Pawn[8];
 
     public Piece[] Board = new Piece[64];
-    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE};
+    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHand, BlackHand;
     public GameState gameState { get; private set; }
 
