@@ -134,16 +134,21 @@ public class GameManager{
         gameState = GameState.WHITEPAWNS;
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
-        whiteDeck = new Deck(0);
-        blackDeck = new Deck(1);
+        for(int i = 0; i<8; i++){
+            whitePawns[i] = new Pawn(0);
+            blackPawns[i] = new Pawn(1);
+        }
+        whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
+        blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
+
     }
 
     public void PawnHand(int id){
         if(id == 0){
-            whiteHand.Add(whiteDeck.getPawn());
+            whiteHand.Add(whiteDeck.getPawn(0));
         }
         else{
-            blackHand.Add(blackDeck.getPawn());
+            blackHand.Add(blackDeck.getPawn(1));
         }
     }
 
