@@ -29,6 +29,7 @@ public class GameManager{
 
     public Deck whiteDeck, blackDeck;
     public List<Piece> whiteHand, blackHand;
+
     public Piece[] Board = new Piece[64];
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
@@ -140,25 +141,32 @@ public class GameManager{
 
     public void PawnHand(int id){
         if(id == 0){
-            whiteHand.Add(whiteDeck.getPawn());
+            whiteHand = whiteDeck.getPawns();
         }
         else{
-            blackHand.Add(blackDeck.getPawn());
+            blackHand = blackDeck.getPawns();
         }
     }
 
-    public void GetPiece(int id){
+    public void RandomHand(int id){
         if(id == 0){
-            whiteHand.Add(whiteDeck.GetPiece());
+            whiteHand = whiteDeck.getCards();
         }
         else{
-            blackHand.Add(blackDeck.GetPiece());
+            blackHand = blackDeck.getCards();
         }
     }
 
-    public void clickedTile(int id){
-        if(Board[id] != null){
-
+    public void ReturnHand(int id){
+        if(id == 0){
+            List<Piece> temp = whiteDeck.getCards();
         }
+        else{
+            List<Piece> temp = blackDeck.getCards();
+        }
+    }
+
+    public void PlaceCards(int id){
+        
     }
 }

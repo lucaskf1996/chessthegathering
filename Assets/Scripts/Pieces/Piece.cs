@@ -12,6 +12,7 @@ public interface Piece
     }
     
     public int id {get; set; }
+    public int spriteId {get; set; }
     public STATE state {get; set; }
     public List<int> legalMoves {get;}
     public List<int> captureMoves {get;}

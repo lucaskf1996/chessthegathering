@@ -3,10 +3,12 @@ using System.Collections.Generic;
 public class Pawn : Piece
 {
     public int id {get; set; }
+    public int spriteId {get; set; }
     public Piece.STATE state {get; set; }
     public List<int> legalMoves {get;}
     public List<int> captureMoves {get;}
     public int position {get; set; }
+    
     public Pawn(int id){
         this.id = id;
         this.state = Piece.STATE.DECK;

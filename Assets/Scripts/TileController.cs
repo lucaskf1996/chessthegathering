@@ -13,8 +13,13 @@ public class TileController : MonoBehaviour
 
     private Ray ray;
     private RaycastHit rht;
+    private GameManager gm;
+    
+
     void Start()
-    {
+    {   
+        gm = GameManager.GetInstance();
+        gm.SetInitialPieces();
         this.board = new GameObject("Board");
         this.board.transform.localScale = new Vector3(0.5f, 0.5f, 0.0f);
         this.sprBoard = this.board.AddComponent<SpriteRenderer>();
@@ -44,6 +49,7 @@ public class TileController : MonoBehaviour
                 tileCount ++;
             }
         }
+        this.fillBoard();
     }
     void TileClicked(int id){
         Debug.Log(id);
@@ -53,5 +59,14 @@ public class TileController : MonoBehaviour
     void setSprite(int tileID, int spriteID){
         Debug.Log(string.Format("Setting tile: {0} to: {1}", tileID, spriteID));
         this.tiles[tileID].GetComponent<SpriteRenderer>().sprite = this.pieces[spriteID];
+    }
+
+    void fillBoard(){
+        for(int i = 0; i < 64; i++){
+            if(gm.Board[i] != null){
+                setSprite(i, gm.Board[i].spriteId);
+            }
+        }
+
     }
 }
