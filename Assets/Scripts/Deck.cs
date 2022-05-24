@@ -40,42 +40,4 @@ public class Deck : MonoBehaviour
         Piece temp = new Pawn(this.id);
         return temp;
     }
-
-    ///////////////OLD/////////////////
-
-    // public List<Piece> getCards(){  MULTIPLE CARDS
-    //     List<Piece> temp;
-    //     if(deck.Count == 0){
-    //         temp = new List<Piece>{};
-    //     }
-    //     else if(deck.Count == 1){
-    //         temp = new List<Piece>{deck[0]};
-    //         deck.RemoveAt(0);
-    //     }
-    //     else if(deck.Count == 2){
-    //         temp = new List<Piece>{deck[0],deck[1]};
-    //         deck.RemoveAt(0);
-    //         deck.RemoveAt(1);
-    //     }
-    //     else{
-    //         temp = new List<Piece>{deck[0],deck[1],deck[2]};
-    //         deck.RemoveAt(0);
-    //         deck.RemoveAt(1);
-    //         deck.RemoveAt(2);
-    //     }
-    //     return temp;
-    // }
-
-    // private void returnedCards(List<Piece> returned){
-    //     for(int i = 0; i<returned.Count; i++){
-    //         deck.Add(returned[i]);
-    //     }
-    //     int n = deck.Count;
-    //     for (int i = 0; i < n; i++) {
-    //         Piece temp = deck[i];
-    //         int randomIndex = Random.Range(i, n);
-    //         deck[i] = deck[randomIndex];
-    //         deck[randomIndex] = temp;
-    //     }
-    // }
 }
