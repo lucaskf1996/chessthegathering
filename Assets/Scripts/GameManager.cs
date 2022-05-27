@@ -80,6 +80,7 @@ public class GameManager{
                 kingInCheck = this.LegalCapture(i, kingPosition);
                 blockedPath = this.BlockedPath(i, kingPosition);
                 if(kingInCheck && !blockedPath){
+                    kingInCheck = true;
                     Debug.Log("CHECK");
                 }
             }
@@ -154,9 +155,10 @@ public class GameManager{
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
         bool canCapture = this.LegalCapture(pPosition, i);
-        bool kingInCheck = false;
+        bool selfChecked = false;
         bool isBlocked = false;
         int ownKingPosition;
+        int tempPosition;
 
 
         if(canCapture){
@@ -170,10 +172,16 @@ public class GameManager{
                 return false;
             }
             this.Board[pPosition] = null;
+            tempPosition = pPosition;
             pPosition = i;
             this.Board[i] = p;
             ownKingPosition = this.getOwnKingPosition(p.id);
-            kingInCheck = this.SelfCheck(ownKingPosition);
+            selfChecked = this.SelfCheck(ownKingPosition);
+            if(selfChecked){
+                this.Board[tempPosition] = p;
+                this.Board[i] = null;
+                return false;
+            }
             return true;
         }
 
