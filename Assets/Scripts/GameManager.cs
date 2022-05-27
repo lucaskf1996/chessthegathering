@@ -70,16 +70,18 @@ public class GameManager{
 
     public bool SelfCheck(int kingPosition){
         bool kingInCheck = false;
+        bool legalCap = false;
         bool blockedPath;
-        Debug.Log(kingPosition);
         for(int i = 0; i < 64; i++){
             if(this.Board[i]== null){
                 continue;
             }
             if(this.Board[i].id != this.Board[kingPosition].id){
-                kingInCheck = this.LegalCapture(i, kingPosition);
+                legalCap = this.LegalCapture(i, kingPosition);
                 blockedPath = this.BlockedPath(i, kingPosition);
-                if(kingInCheck && !blockedPath){
+                Debug.Log(kingInCheck);
+                Debug.Log(blockedPath);
+                if(legalCap && !blockedPath){
                     kingInCheck = true;
                     Debug.Log("CHECK");
                 }
@@ -180,6 +182,7 @@ public class GameManager{
             if(selfChecked){
                 this.Board[tempPosition] = p;
                 this.Board[i] = null;
+                Debug.Log("SELF CHECKED");
                 return false;
             }
             return true;
