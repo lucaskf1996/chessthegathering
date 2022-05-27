@@ -98,7 +98,8 @@ public class GameManager{
         int hTile = Math.Max(pPosition, target);
         int lTile = Math.Min(pPosition, target);
         int bIndex;
-        path = hTile % lTile;
+        path = hTile - lTile;
+
         if(path % 9 == 0){
             path = 9;
         }
@@ -114,6 +115,7 @@ public class GameManager{
         }
         Debug.Log("Path = " + path);
         Debug.Log("lTile = " + lTile);
+        Debug.Log("hTile = " + hTile);
         for(int i = 0; i < 8; i++){
             bIndex = lTile+ i * path ;
             if(bIndex == pPosition || bIndex > hTile){
@@ -157,13 +159,15 @@ public class GameManager{
         foreach(int move in p.captureMoves){
             if(move == moveOffset){
                 if(Board[i]!=null){
-                    //Check if King of same color is in check after move
-                    // boardCopy[i] = p;
-                    // boardCopy[pPosition] = null;
-                    isKinginCheck = this.isInCheck(ownKingPosition, boardCopy);
-                    if(!isKinginCheck){
-                        canCapture = true;
-                        canMove = false;
+                    if(Board[i].id != p.id){
+                        //Check if King of same color is in check after move
+                        // boardCopy[i] = p;
+                        // boardCopy[pPosition] = null;
+                        isKinginCheck = this.isInCheck(ownKingPosition, boardCopy);
+                        if(!isKinginCheck){
+                            canCapture = true;
+                            canMove = false;
+                        }
                     }
                 }
             }
