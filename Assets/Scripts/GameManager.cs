@@ -33,11 +33,10 @@ public class GameManager{
     public Piece clickedPiece;
 
     public Piece[] Board = new Piece[64];
-    public Piece[] boardCopy = new Piece[64];
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
-    public int selectedTile = -1;
+    public int selectedTile;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -52,39 +51,43 @@ public class GameManager{
         this.Board[4] = blackKing;
     }
 
-    public int getOwnKingPosition(int pId){
+    public int getOwnKingPosition(int colorId){
         int ownKingPosition = 0;
         King ownKing;
-        if(pId == 0){
-            ownKing = this.whiteKing;
+        if(colorId == 0){
+            ownKing = whiteKing;
         }
         else{
-            ownKing = this.blackKing;
+            ownKing = blackKing;
         }
         for(int i = 0; i < 64; i++){
-            if(this.Board[i] == null){
-                continue;
-            }
-            if(this.Board[i].GetType() == ownKing.GetType()){
+            if(this.Board[i] == ownKing){
                 ownKingPosition = i;
             }
         }
         return ownKingPosition;
     }
 
-    public bool isInCheck(int kingPosition, Piece[] boardCopy){
+    public bool SelfCheck(int kingPosition){
         bool kingInCheck = false;
-
-        for(int i = 0; i < 63; i ++){
-            if(boardCopy[i] == null){
+        bool blockedPath;
+        Debug.Log(kingPosition);
+        for(int i = 0; i < 64; i++){
+            if(this.Board[i]== null){
                 continue;
             }
-            Debug.Log("i = " + i + "Piece = " + boardCopy[i].GetType());
+            if(this.Board[i].id != this.Board[kingPosition].id){
+                kingInCheck = this.LegalCapture(i, kingPosition);
+                blockedPath = this.BlockedPath(i, kingPosition);
+                if(kingInCheck && !blockedPath){
+                    Debug.Log("CHECK");
+                }
+            }
         }
         return kingInCheck;
     }
 
-    public bool BlockedPath(int pPosition, int target, Piece[] boardCopy){
+    public bool BlockedPath(int pPosition, int target){
         Piece p = this.Board[pPosition];
         bool pathIsBlocked = false;
         int path;
@@ -108,11 +111,11 @@ public class GameManager{
         }
         for(int i = 0; i < 8; i++){
             bIndex = lTile+ i * path ;
-            if(bIndex == pPosition || bIndex > hTile){
+            if(bIndex == pPosition || bIndex > hTile || bIndex == target){
                 continue;
             }
             if(bIndex > 0 && bIndex < 63 ){
-                if(boardCopy[lTile + i*path] != null){
+                if(this.Board[lTile + i*path] != null){
                     pathIsBlocked = true;
                 }
             }
@@ -120,47 +123,48 @@ public class GameManager{
         return(pathIsBlocked);
     }
 
-    public bool MovePiece(int pPosition, int i){
-        this.Board.CopyTo(this.boardCopy,0);
-        Piece p = this.Board[pPosition];
-        int ownKingPosition = this.getOwnKingPosition(p.id);
+    public bool LegalMovement(int pPosition, int i){
         bool canMove = false;
-        bool canCapture = false;
-        bool isKinginCheck = false;
-        bool isBlocked = false;
-
         int moveOffset = i - pPosition;
+        Piece p = this.Board[pPosition];
         foreach(int move in p.legalMoves){
             if(move == moveOffset){
-                //Check if King of same color is in check after move
-                this.boardCopy[i] = p;
-                this.boardCopy[pPosition] = null;
-                isKinginCheck = this.isInCheck(ownKingPosition, this.boardCopy);
-                if(!isKinginCheck){
-                    canMove = true;
-                }
+                canMove = true;
             }
         }
+        return canMove;
+    }
+
+    public bool LegalCapture(int pPosition, int i){
+        int moveOffset = i - pPosition;
+        Piece p = this.Board[pPosition];
+        bool canCapture = false;
         foreach(int move in p.captureMoves){
             if(move == moveOffset){
                 if(Board[i]!=null){
                     if(Board[i].id != p.id){
-                        //Check if King of same color is in check after move
-                        boardCopy[i] = p;
-                        boardCopy[pPosition] = null;
-                        isKinginCheck = this.isInCheck(ownKingPosition, this.boardCopy);
-                        if(!isKinginCheck){
-                            canCapture = true;
-                            canMove = false;
+                        canCapture = true;
                         }
-                    }
                 }
             }
         }
+        return canCapture;
+    }
+    public bool MovePiece(int pPosition, int i){
+        Piece p = this.Board[pPosition];
+        bool canMove = this.LegalMovement(pPosition, i);
+        bool canCapture = this.LegalCapture(pPosition, i);
+        bool kingInCheck = false;
+        bool isBlocked = false;
+        int ownKingPosition;
 
+
+        if(canCapture){
+            canMove = false;
+        }
         if(canMove == true){
             if(p.GetType() != whiteKnight.GetType()){
-                isBlocked = this.BlockedPath(pPosition, i, this.Board);
+                isBlocked = this.BlockedPath(pPosition, i);
             }
             if(isBlocked == true){
                 return false;
@@ -168,11 +172,20 @@ public class GameManager{
             this.Board[pPosition] = null;
             pPosition = i;
             this.Board[i] = p;
-            Debug.Log("Moved");
+            ownKingPosition = this.getOwnKingPosition(p.id);
+            kingInCheck = this.SelfCheck(ownKingPosition);
             return true;
         }
 
         if(canCapture == true){
+            if(p.GetType() != whiteKnight.GetType()){
+                isBlocked = this.BlockedPath(pPosition, i);
+            }
+            if(isBlocked == true){
+                return false;
+            }
+
+            //Arrumar isso aqui
             this.Board[i].Capture();
             this.Board[pPosition] = null;
             pPosition = i;
@@ -250,7 +263,7 @@ public class GameManager{
     }
 
     public void clickedTile(int id){
-        Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
+        // Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
         switch (this.gameState) {
             case (GameState.WHITEPAWNS):
                 if(this.Board[id] == null) return;
@@ -266,7 +279,6 @@ public class GameManager{
                 }
                 else{
                     this.gameState = GameState.WHITEPAWNS;
-                    this.selectedTile = -1;
                 }
                 break;
             case (GameState.BLACKPAWNS):
@@ -283,7 +295,6 @@ public class GameManager{
                 }
                 else{
                     this.gameState = GameState.BLACKPAWNS;
-                    this.selectedTile = -1;
                 }
                 break;
             default:
