@@ -12,6 +12,7 @@ public class Pawn : Piece
     public Pawn(int id){
         this.id = id;
         this.state = Piece.STATE.DECK;
+        this.spriteId = (this.id == 0) ? 11 : 5;
         this.legalMoves = new List<int>();
         this.captureMoves = new List<int>();
         // If it's a black pawn

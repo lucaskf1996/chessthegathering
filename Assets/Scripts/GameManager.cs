@@ -36,7 +36,7 @@ public class GameManager{
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
-
+    private int selectedTile;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -146,6 +146,29 @@ public class GameManager{
 
     }
 
+    public void FillDefaultBoard(){
+            this.Board[0] = this.blackRook;
+            this.Board[7] = this.blackRook;
+            this.Board[1] = this.blackKnight;
+            this.Board[6] = this.blackKnight;
+            this.Board[2] = this.blackBishop;
+            this.Board[5] = this.blackBishop;
+            this.Board[3] = this.blackQueen;
+            this.Board[56] = this.whiteRook;
+            this.Board[63] = this.whiteRook;
+            this.Board[57] = this.whiteKnight;
+            this.Board[62] = this.whiteKnight;
+            this.Board[58] = this.whiteBishop;
+            this.Board[61] = this.whiteBishop;
+            this.Board[59] = this.whiteQueen;
+            for(int i = 8, j = 0; i<16; i++, j++){
+                this.Board[i] = this.blackPawns[j];
+            }
+            for(int i = 48, j = 0; i<56; i++, j++){
+                this.Board[i] = this.whitePawns[j];
+            }
+    }
+
     public void PawnHand(int id){
         if(id == 0){
             whiteHand.Add(whiteDeck.getPawn(0));
@@ -165,10 +188,68 @@ public class GameManager{
     }
 
     public void clickedTile(int id){
-        if(Board[id] != null){
-            if(playerTurn == Board[id].id){
-                clickedPiece = Board[id];
-            }
+        Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
+        switch (this.gameState) {
+            case (GameState.WHITEPAWNS):
+                if(this.Board[id] == null) return;
+                if (this.Board[id].id == 0){
+                    this.selectedTile = id;
+                    this.gameState = GameState.WHITEMOVE;
+                }
+                break;
+            case (GameState.WHITEMOVE):
+                if (this.Board[id] != null){
+                    if (this.Board[id].id == 1){
+                        // Move to capture
+                        Piece temp = this.Board[this.selectedTile];
+                        this.Board[this.selectedTile] = null;
+                        this.Board[id] = temp;
+                        this.Board[id].position = id;
+                    } else {
+                        // Move to friendly tile
+                        this.gameState = GameState.WHITEPAWNS;
+                        break;
+                    }
+                } else {
+                    // Move to empty tile
+                    Piece temp = this.Board[this.selectedTile];
+                    this.Board[this.selectedTile] = null;
+                    this.Board[id] = temp;
+                    this.Board[id].position = id;
+                }
+                this.gameState = GameState.BLACKPAWNS;
+                break;
+            case (GameState.BLACKPAWNS):
+                if(this.Board[id] == null) return;
+                if (this.Board[id].id == 1){
+                    this.selectedTile = id;
+                    this.gameState = GameState.BLACKMOVE;
+                }
+                break;
+            case (GameState.BLACKMOVE):
+                if (this.Board[id] != null){
+                    if (this.Board[id].id == 0){
+                        // Move to capture
+                        Piece temp = this.Board[this.selectedTile];
+                        this.Board[this.selectedTile] = null;
+                        this.Board[id] = temp;
+                        this.Board[id].position = id;
+                    } else {
+                        // Move to friendly tile
+                        this.gameState = GameState.BLACKPAWNS;
+                        break;
+                    }
+                } else {
+                    // Move to empty tile
+                    Piece temp = this.Board[this.selectedTile];
+                    this.Board[this.selectedTile] = null;
+                    this.Board[id] = temp;
+                    this.Board[id].position = id;
+                }
+                this.gameState = GameState.WHITEPAWNS;
+                break;
+            default:
+                break;
         }
     }
 
