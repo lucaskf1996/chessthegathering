@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour
 {
     private int id;
     private GameObject controller;
+    public GameObject halo;
     private void OnMouseDown() {
          this.controller.SendMessage("TileClicked", this.id);
     }
@@ -16,6 +17,10 @@ public class Tile : MonoBehaviour
 
     public void setController (GameObject controller){
         this.controller = controller;
+    }
+
+    public void setHalo(bool t){
+        this.halo.SetActive(t);
     }
 
 }

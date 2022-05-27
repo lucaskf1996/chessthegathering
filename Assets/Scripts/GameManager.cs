@@ -36,7 +36,7 @@ public class GameManager{
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
-    private int selectedTile;
+    public int selectedTile = -1;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -283,6 +283,7 @@ public class GameManager{
                 }
                 else{
                     this.gameState = GameState.WHITEPAWNS;
+                    this.selectedTile = -1;
                 }
                 break;
             case (GameState.BLACKPAWNS):
@@ -299,6 +300,7 @@ public class GameManager{
                 }
                 else{
                     this.gameState = GameState.BLACKPAWNS;
+                    this.selectedTile = -1;
                 }
                 break;
             default:
