@@ -72,9 +72,19 @@ public class TileController : MonoBehaviour
 
     void fillBoard(){
         for(int i = 0; i < 64; i++){
+            removeGlow(i);
             if(gm.Board[i] != null){
+                if (i == gm.selectedTile) setGlow(i);  
                 setSprite(i, gm.Board[i].spriteId);
             } else clearSprite(i);
         }
+    }
+
+    void setGlow(int i){
+        this.tiles[i].SendMessage("setHalo", true);
+    }
+
+    void removeGlow(int i){
+        this.tiles[i].SendMessage("setHalo", false);
     }
 }
