@@ -49,7 +49,6 @@ public class GameManager{
     public void SetInitialPieces(){
         this.Board[60] = whiteKing;
         this.Board[4] = blackKing;
-        this.Board[46] = blackKnight;
     }
 
     public int getOwnKingPosition(int colorId){
@@ -73,22 +72,22 @@ public class GameManager{
         int moveOffset;
         bool blockedPath;
 
-        for(int i = 0; i < 64; i++){
-            if(boardCopy[i].GetType() == boardCopy[kingPosition].GetType()){
-                if(boardCopy[i].id != boardCopy[kingPosition].id){
-                    moveOffset = kingPosition - i;
-                    foreach(int move in boardCopy[i].captureMoves){
-                        blockedPath = this.BlockedPath(i, kingPosition, boardCopy);
-                        if(move == moveOffset){
-                            if(blockedPath == false){
-                                kingInCheck = true;
-                            }
-                        }
-                    }
+        // for(int i = 0; i < 64; i++){
+        //     if(boardCopy[i]!= null){
+        //         if(boardCopy[i].id != boardCopy[kingPosition].id){
+        //             moveOffset = kingPosition - i;
+        //             foreach(int move in boardCopy[i].captureMoves){
+        //                 blockedPath = this.BlockedPath(i, kingPosition, boardCopy);
+        //                 if(move == moveOffset){
+        //                     if(blockedPath == false){
+        //                         kingInCheck = true;
+        //                     }
+        //                 }
+        //             }
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
         return kingInCheck;
     }
 
@@ -98,7 +97,7 @@ public class GameManager{
         int path;
         int hTile = Math.Max(pPosition, target);
         int lTile = Math.Min(pPosition, target);
-
+        int bIndex;
         path = hTile % lTile;
         if(path % 9 == 0){
             path = 9;
@@ -113,30 +112,42 @@ public class GameManager{
         else{
             path = 1;
         }
+        Debug.Log("Path = " + path);
+        Debug.Log("lTile = " + lTile);
         for(int i = 0; i < 8; i++){
-            if(boardCopy[(i+lTile)*path].GetType() == p.GetType()){
-                pathIsBlocked = true;
+            bIndex = lTile+ i * path ;
+            if(bIndex == pPosition || bIndex > hTile){
+                continue;
             }
-
+            if(bIndex > 0 && bIndex < 63 ){
+                if(boardCopy[lTile + i*path] != null){
+                    pathIsBlocked = true;
+                }
+            }
         }
-
+        Debug.Log("PathBlocked = " + pathIsBlocked);
         return(pathIsBlocked);
     }
 
-    public void MovePiece(int pPosition, int i, Piece[] boardCopy){
+    public bool MovePiece(int pPosition, int i, Piece[] boardCopy){
+        Debug.Log("pPosition = " + pPosition + " desiredPosition = " + i); 
         Piece p = this.Board[pPosition];
         int ownKingPosition = this.getOwnKingPosition(p.id);
         bool canMove = false;
         bool canCapture = false;
         bool isKinginCheck = false;
+        bool isBlocked = false;
 
         int moveOffset = i - pPosition;
-
+        // Debug.Log("moveOffset = " + moveOffset); 
+        // Debug.Log("PieceID = " + p.id);
         foreach(int move in p.legalMoves){
+            // Debug.Log("Move = " + move);
             if(move == moveOffset){
+                // Debug.Log("Entered legalMove" + isKinginCheck);
                 //Check if King of same color is in check after move
-                boardCopy[i] = p;
-                boardCopy[pPosition] = null;
+                // boardCopy[i] = p;
+                // boardCopy[pPosition] = null;
                 isKinginCheck = this.isInCheck(ownKingPosition, boardCopy);
                 if(!isKinginCheck){
                     canMove = true;
@@ -145,33 +156,45 @@ public class GameManager{
         }
         foreach(int move in p.captureMoves){
             if(move == moveOffset){
-                if(Board[i].GetType() == p.GetType()){
+                if(Board[i]!=null){
                     //Check if King of same color is in check after move
-                    boardCopy[i] = p;
-                    boardCopy[pPosition] = null;
+                    // boardCopy[i] = p;
+                    // boardCopy[pPosition] = null;
                     isKinginCheck = this.isInCheck(ownKingPosition, boardCopy);
                     if(!isKinginCheck){
                         canCapture = true;
+                        canMove = false;
                     }
                 }
             }
         }
 
+        // Debug.Log("King in check? " + isKinginCheck);
+        Debug.Log("CAN MOVE = " + canMove);
         if(canMove == true){
+            if(p.GetType() != whiteKnight.GetType()){
+                isBlocked = this.BlockedPath(pPosition, i, boardCopy);
+            }
+            if(isBlocked == true){
+                return false;
+            }
             this.Board[pPosition] = null;
             pPosition = i;
             this.Board[i] = p;
             Debug.Log("Moved");
+            return true;
         }
 
-        else if(canCapture == true){
+        if(canCapture == true){
             this.Board[i].Capture();
             this.Board[pPosition] = null;
             pPosition = i;
             this.Board[i] = p;
+            return true;
         }
         else{
             Debug.Log("Cant Move");
+            return false;
         }
 
     }
@@ -240,7 +263,7 @@ public class GameManager{
     }
 
     public void clickedTile(int id){
-        Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
+        // Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
         switch (this.gameState) {
             case (GameState.WHITEPAWNS):
                 if(this.Board[id] == null) return;
@@ -250,26 +273,13 @@ public class GameManager{
                 }
                 break;
             case (GameState.WHITEMOVE):
-                if (this.Board[id] != null){
-                    if (this.Board[id].id == 1){
-                        // Move to capture
-                        Piece temp = this.Board[this.selectedTile];
-                        this.Board[this.selectedTile] = null;
-                        this.Board[id] = temp;
-                        this.Board[id].position = id;
-                    } else {
-                        // Move to friendly tile
-                        this.gameState = GameState.WHITEPAWNS;
-                        break;
-                    }
-                } else {
-                    // Move to empty tile
-                    Piece temp = this.Board[this.selectedTile];
-                    this.Board[this.selectedTile] = null;
-                    this.Board[id] = temp;
-                    this.Board[id].position = id;
+                bool moved = this.MovePiece(this.selectedTile, id, this.Board);
+                if(moved){
+                    this.gameState = GameState.BLACKPAWNS;
                 }
-                this.gameState = GameState.BLACKPAWNS;
+                else{
+                    this.gameState = GameState.WHITEPAWNS;
+                }
                 break;
             case (GameState.BLACKPAWNS):
                 if(this.Board[id] == null) return;
@@ -279,26 +289,13 @@ public class GameManager{
                 }
                 break;
             case (GameState.BLACKMOVE):
-                if (this.Board[id] != null){
-                    if (this.Board[id].id == 0){
-                        // Move to capture
-                        Piece temp = this.Board[this.selectedTile];
-                        this.Board[this.selectedTile] = null;
-                        this.Board[id] = temp;
-                        this.Board[id].position = id;
-                    } else {
-                        // Move to friendly tile
-                        this.gameState = GameState.BLACKPAWNS;
-                        break;
-                    }
-                } else {
-                    // Move to empty tile
-                    Piece temp = this.Board[this.selectedTile];
-                    this.Board[this.selectedTile] = null;
-                    this.Board[id] = temp;
-                    this.Board[id].position = id;
+                moved = this.MovePiece(this.selectedTile, id, this.Board);
+                if(moved){
+                    this.gameState = GameState.WHITEPAWNS;
                 }
-                this.gameState = GameState.WHITEPAWNS;
+                else{
+                    this.gameState = GameState.BLACKPAWNS;
+                }
                 break;
             default:
                 break;

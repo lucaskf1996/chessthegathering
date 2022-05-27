@@ -16,7 +16,7 @@ public class Pawn : Piece
         this.legalMoves = new List<int>();
         this.captureMoves = new List<int>();
         // If it's a black pawn
-        if (this.id != 1) {
+        if (this.id == 1) {
             this.legalMoves.Add(8); // Go down
             this.captureMoves.Add(7); // Diag left
             this.captureMoves.Add(9); // Diag right
