@@ -79,8 +79,6 @@ public class GameManager{
             if(this.Board[i].id != this.Board[kingPosition].id){
                 legalCap = this.LegalCapture(i, kingPosition);
                 blockedPath = this.BlockedPath(i, kingPosition);
-                Debug.Log(kingInCheck);
-                Debug.Log(blockedPath);
                 if(legalCap && !blockedPath){
                     kingInCheck = true;
                     Debug.Log("CHECK");
@@ -92,6 +90,11 @@ public class GameManager{
 
     public bool BlockedPath(int pPosition, int target){
         Piece p = this.Board[pPosition];
+        if(this.Board[target]!= null){
+            if(p.id == this.Board[target].id){
+                return true;
+            }
+        }
         bool pathIsBlocked = false;
         int path;
         int hTile = Math.Max(pPosition, target);
@@ -157,6 +160,8 @@ public class GameManager{
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
         bool canCapture = this.LegalCapture(pPosition, i);
+        Debug.Log(canMove);
+        Debug.Log(canCapture);
         bool selfChecked = false;
         bool isBlocked = false;
         int ownKingPosition;
@@ -187,7 +192,7 @@ public class GameManager{
             }
             return true;
         }
-
+        Debug.Log(canCapture);
         if(canCapture == true){
             if(p.GetType() != whiteKnight.GetType()){
                 isBlocked = this.BlockedPath(pPosition, i);
