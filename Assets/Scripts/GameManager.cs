@@ -336,7 +336,8 @@ public class GameManager{
                     this.selectedTile = -1;
                 }
                 else{
-                    this.ChangeState(GameState.WHITEPAWNS);
+                    
+                    this.gameState = GameState.WHITEPAWNS;
                     this.selectedTile = -1;
                 }
                 break;
@@ -355,7 +356,7 @@ public class GameManager{
                     this.moveCount ++;
                 }
                 else{
-                    this.ChangeState(GameState.BLACKPAWNS);
+                    this.gameState = GameState.BLACKPAWNS;
                     this.selectedTile = -1;
                 }
                 break;
