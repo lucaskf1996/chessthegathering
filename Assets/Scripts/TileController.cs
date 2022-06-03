@@ -146,7 +146,6 @@ public class TileController : MonoBehaviour
             this.whiteHandTiles[tileId].GetComponent<SpriteRenderer>().sprite = null;
         }
         else{
-            Debug.Log("Entrei Else");
             this.blackHandTiles[tileId].GetComponent<SpriteRenderer>().sprite = null;
         }
     }

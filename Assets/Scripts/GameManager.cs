@@ -370,7 +370,15 @@ public class GameManager{
             case (GameState.WHITEMOVE):
                 if(clickedHand){
                     this.clickedHand = false;
-                    bool placed = this.placePiece(whiteHand[selectedPiece], id);
+                    int ownKingPosition = this.getOwnKingPosition(0);
+                    bool selfChecked = this.SelfCheck(ownKingPosition);
+                    bool placed = false;
+                    if(selfChecked){
+                        placed = false;
+                    }
+                    else{
+                        placed = this.placePiece(whiteHand[selectedPiece], id);
+                    }
                     if(placed) {
                         this.ChangeState( GameState.BLACKPAWNS);
                         this.selectedTile = -1;
@@ -405,7 +413,15 @@ public class GameManager{
             case (GameState.BLACKMOVE):
                 if(clickedHand){
                     this.clickedHand = false;
-                    bool placed = this.placePiece(blackHand[selectedPiece], id);
+                    int ownKingPosition = this.getOwnKingPosition(1);
+                    bool selfChecked = this.SelfCheck(ownKingPosition);
+                    bool placed = false;
+                    if(selfChecked){
+                        placed = false;
+                    }
+                    else{
+                        placed = this.placePiece(blackHand[selectedPiece], id);
+                    }
                     if(placed) {
                         this.ChangeState(GameState.WHITEPAWNS);
                         this.selectedTile = -1;
