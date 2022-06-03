@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardSprite: {fileID: 21300000, guid: 0f14c88cb4681734a9d69324b6f4268b, type: 3}
-  handSprite: {fileID: 0}
+  handSprite: {fileID: 21300000, guid: 64e219d8220bb1f45aab77cb6cb0f6ac, type: 3}
   pieces:
   - {fileID: 21300000, guid: e09dd7ef81b191d448a7f0e23e292e9b, type: 3}
   - {fileID: 21300000, guid: f918d4ac07253394b83f437dd04254e6, type: 3}
