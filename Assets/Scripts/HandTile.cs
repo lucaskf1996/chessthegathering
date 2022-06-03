@@ -7,6 +7,7 @@ public class HandTile : MonoBehaviour
     private int id;
     private GameObject controller;
     private int color;
+    public GameObject halo;
     private int[] infoList = new int[2];
     private void OnMouseDown() {
         this.controller.SendMessage("TileClicked", this.infoList);
@@ -18,6 +19,10 @@ public class HandTile : MonoBehaviour
 
     public void setColor(int color){
         this.color = color;
+    }
+
+    public void setHalo(bool t){
+        this.halo.SetActive(t);
     }
 
     public void createInfoList(){

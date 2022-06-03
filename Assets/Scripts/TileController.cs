@@ -167,13 +167,30 @@ public class TileController : MonoBehaviour
     void removeGlow(int i){
         this.tiles[i].SendMessage("setHalo", false);
     }
+
+    void setGlowHand(int i, int id){
+        if(id == 1){
+            this.blackHandTiles[i].SendMessage("setHalo", true);
+        }
+        else{
+            this.whiteHandTiles[i].SendMessage("setHalo", true);
+        }
+    }
+
+    void removeGlowHand(int i){
+        this.whiteHandTiles[i].SendMessage("setHalo", false);
+        this.blackHandTiles[i].SendMessage("setHalo", false);
+    }
     
     void fillHands(){
         for(int i = 0; i < 8; i++){
+            removeGlowHand(i);
             if(gm.whiteHand[i] != null){
+                if (i == gm.selectedPiece) setGlowHand(i,0); 
                 setSpriteHand(i, gm.whiteHand[i].spriteId, this.whiteId);
             } else clearSpriteHand(i, this.whiteId);
             if(gm.blackHand[i] != null){
+                if (i == gm.selectedPiece) setGlowHand(i,1); 
                 setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
             } else clearSpriteHand(i, this.blackId);
         }

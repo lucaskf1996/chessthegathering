@@ -28,8 +28,8 @@ public class GameManager{
     public Pawn[] blackPawns =  new Pawn[8];
 
     public Deck whiteDeck, blackDeck;
-    public Piece[] whiteHand = new Piece[8];
-    public Piece[] blackHand = new Piece[8];
+    public List<Piece> whiteHand = new List<Piece>(0);
+    public List<Piece> blackHand = new List<Piece>(0);
     public int whiteHandSize = 0;
     public int blackHandSize = 0;
     public int moveCount = 0;
@@ -285,11 +285,11 @@ public class GameManager{
 
     public void PawnHand(int id){
         if(id == 0){
-            whiteHand[whiteHandSize] = whiteDeck.getPawn(0);
+            whiteHand.Add(whiteDeck.getPawn(0));
             whiteHandSize++;
         }
         else{
-            blackHand[blackHandSize] = blackDeck.getPawn(1);
+            blackHand.Add(blackDeck.getPawn(1));
             blackHandSize++;
         }
     }
@@ -297,7 +297,7 @@ public class GameManager{
     public void RandomPiece(int id){
         if(id == 0){
             if(whiteHandSize < 8){
-                whiteHand[whiteHandSize] = whiteDeck.GetPiece();
+                whiteHand.Add(whiteDeck.GetPiece(0));
                 whiteHandSize++;
             }
             else{
@@ -306,7 +306,7 @@ public class GameManager{
         }
         else{
             if(blackHandSize < 8){
-                blackHand[blackHandSize] = blackDeck.GetPiece();
+                whiteHand.Add(whiteDeck.GetPieblackce(1));
                 blackHandSize++;
             }
             else{
