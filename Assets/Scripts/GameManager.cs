@@ -41,6 +41,8 @@ public class GameManager{
     public GameState gameState { get; private set; }
     public int selectedTile = -1;
     private int initialPawns = 0;
+    private int selectedPiece;
+    private bool clickedHand = false;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -315,9 +317,46 @@ public class GameManager{
         }
     }
 
+
+    public bool placePiece(Piece p, int position){
+        if(Board[position] == null){
+            Board[position] = p;
+            return true;
+        }
+        else return false;
+    }
+
     public void clickedTile(int tileID, int color){
+        if(this.gameState == GameState.WHITEPAWNS && color == 1){
+            this.clickedHand = false;
+            return;
+        } 
+        
+        else if(this.gameState == GameState.BLACKPAWNS && color == 0){
+            this.clickedHand = false;
+            return;
+        }
+        if(color == 1){
+            if(blackHand[tileID] == null){
+                return;
+            }
+        }
+        else{
+            if(whiteHand[tileID] == null){
+                return;
+            } 
+        }
+        this.selectedPiece = tileID;
+        this.clickedHand = true;
+        if(color == 0){
+            this.ChangeState(GameState.WHITEMOVE);
+        }
+        else{
+            this.ChangeState(GameState.BLACKMOVE);
+        }
         
     }
+
 
     public void clickedTile(int id){
         // Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
@@ -330,13 +369,26 @@ public class GameManager{
                 }
                 break;
             case (GameState.WHITEMOVE):
+                if(clickedHand){
+                    this.clickedHand = false;
+                    bool placed = this.placePiece(whiteHand[selectedPiece], id);
+                    if(placed) {
+                        this.ChangeState( GameState.BLACKPAWNS);
+                        this.selectedTile = -1;
+                        whiteHand[selectedPiece] = null;
+                    }
+                    else{
+                        this.gameState = GameState.WHITEPAWNS;
+                        this.selectedTile = -1;
+                    }
+                    break;
+                }
                 bool moved = this.MovePiece(this.selectedTile, id);
                 if(moved){
                     this.ChangeState( GameState.BLACKPAWNS);
                     this.selectedTile = -1;
                 }
                 else{
-                    
                     this.gameState = GameState.WHITEPAWNS;
                     this.selectedTile = -1;
                 }
@@ -349,6 +401,21 @@ public class GameManager{
                 }
                 break;
             case (GameState.BLACKMOVE):
+                if(clickedHand){
+                    this.clickedHand = false;
+                    bool placed = this.placePiece(blackHand[selectedPiece], id);
+                    if(placed) {
+                        this.ChangeState(GameState.WHITEPAWNS);
+                        this.selectedTile = -1;
+                        blackHand[selectedPiece] = null;
+                    }
+                    else{
+                        this.gameState = GameState.BLACKPAWNS;
+                        this.selectedTile = -1;
+                    }
+                    break;
+                }
+                
                 moved = this.MovePiece(this.selectedTile, id);
                 if(moved){
                     this.ChangeState(GameState.WHITEPAWNS);
