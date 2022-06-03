@@ -182,6 +182,12 @@ public class GameManager{
             if(isBlocked == true){
                 return false;
             }
+            // Move to opponent piece should not be allowed
+            if(this.Board[i] != null){
+                if (this.Board[i].id != p.id){
+                    return false;
+                }
+            }
             this.Board[pPosition] = null;
             tempPosition = pPosition;
             pPosition = i;
