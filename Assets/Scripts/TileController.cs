@@ -96,7 +96,8 @@ public class TileController : MonoBehaviour
                 tileCountWhite ++;
             }
         }
-
+        gm.ChangeState(GameManager.GameState.WHITEPAWNS);
+        this.fillHands();
         if(this._debugging){
             gm.FillDefaultBoard();
         }

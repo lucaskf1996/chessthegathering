@@ -32,7 +32,7 @@ public class GameManager{
     public Piece[] blackHand = new Piece[8];
     public int whiteHandSize = 0;
     public int blackHandSize = 0;
-    public int playerTurn = 0;
+    public int moveCount = 0;
     public Piece clickedPiece;
 
     public Piece[] Board = new Piece[64];
@@ -226,19 +226,22 @@ public class GameManager{
     }
 
     public void ChangeState(GameState nextState)
-    {
-        if(initialPawns<2){
-            if(nextState == GameState.WHITEPAWNS){
-                PawnHand(0);
+    {   
+
+        if(nextState == GameState.WHITEPAWNS)
+            if (this.moveCount < 2){
+                this.PawnHand(0);
             }
-            if(nextState == GameState.BLACKPAWNS){
-                PawnHand(1);
-                initialPawns++;
+            else{
+                this.RandomPiece(0);
             }
-        }
-        // else{
-        //     if
-        // }
+        else if(nextState == GameState.BLACKPAWNS)
+            if (this.moveCount < 2){
+                this.PawnHand(1);
+            }
+            else{
+                this.RandomPiece(1);
+            }
         gameState = nextState;
     }
 
@@ -252,31 +255,30 @@ public class GameManager{
         }
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
-        gameState = GameState.WHITEPAWNS;
         // ChangeState(gameState);
     }
 
     public void FillDefaultBoard(){
-            this.Board[0] = this.blackRook;
-            this.Board[7] = this.blackRook;
-            this.Board[1] = this.blackKnight;
-            this.Board[6] = this.blackKnight;
-            this.Board[2] = this.blackBishop;
-            this.Board[5] = this.blackBishop;
-            this.Board[3] = this.blackQueen;
-            this.Board[56] = this.whiteRook;
-            this.Board[63] = this.whiteRook;
-            this.Board[57] = this.whiteKnight;
-            this.Board[62] = this.whiteKnight;
-            this.Board[58] = this.whiteBishop;
-            this.Board[61] = this.whiteBishop;
-            this.Board[59] = this.whiteQueen;
-            for(int i = 8, j = 0; i<16; i++, j++){
-                this.Board[i] = this.blackPawns[j];
-            }
-            for(int i = 48, j = 0; i<56; i++, j++){
-                this.Board[i] = this.whitePawns[j];
-            }
+            // this.Board[0] = this.blackRook;
+            // this.Board[7] = this.blackRook;
+            // this.Board[1] = this.blackKnight;
+            // this.Board[6] = this.blackKnight;
+            // this.Board[2] = this.blackBishop;
+            // this.Board[5] = this.blackBishop;
+            // this.Board[3] = this.blackQueen;
+            // this.Board[56] = this.whiteRook;
+            // this.Board[63] = this.whiteRook;
+            // this.Board[57] = this.whiteKnight;
+            // this.Board[62] = this.whiteKnight;
+            // this.Board[58] = this.whiteBishop;
+            // this.Board[61] = this.whiteBishop;
+            // this.Board[59] = this.whiteQueen;
+            // for(int i = 8, j = 0; i<16; i++, j++){
+            //     this.Board[i] = this.blackPawns[j];
+            // }
+            // for(int i = 48, j = 0; i<56; i++, j++){
+            //     this.Board[i] = this.whitePawns[j];
+            // }
     }
 
 
@@ -324,17 +326,17 @@ public class GameManager{
                 if(this.Board[id] == null) return;
                 if (this.Board[id].id == 0){
                     this.selectedTile = id;
-                    this.gameState = GameState.WHITEMOVE;
+                    this.ChangeState(GameState.WHITEMOVE);
                 }
                 break;
             case (GameState.WHITEMOVE):
                 bool moved = this.MovePiece(this.selectedTile, id);
                 if(moved){
-                    this.gameState = GameState.BLACKPAWNS;
+                    this.ChangeState( GameState.BLACKPAWNS);
                     this.selectedTile = -1;
                 }
                 else{
-                    this.gameState = GameState.WHITEPAWNS;
+                    this.ChangeState(GameState.WHITEPAWNS);
                     this.selectedTile = -1;
                 }
                 break;
@@ -342,17 +344,18 @@ public class GameManager{
                 if(this.Board[id] == null) return;
                 if (this.Board[id].id == 1){
                     this.selectedTile = id;
-                    this.gameState = GameState.BLACKMOVE;
+                    this.ChangeState(GameState.BLACKMOVE);
                 }
                 break;
             case (GameState.BLACKMOVE):
                 moved = this.MovePiece(this.selectedTile, id);
                 if(moved){
-                    this.gameState = GameState.WHITEPAWNS;
+                    this.ChangeState(GameState.WHITEPAWNS);
                     this.selectedTile = -1;
+                    this.moveCount ++;
                 }
                 else{
-                    this.gameState = GameState.BLACKPAWNS;
+                    this.ChangeState(GameState.BLACKPAWNS);
                     this.selectedTile = -1;
                 }
                 break;
