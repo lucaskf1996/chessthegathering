@@ -166,8 +166,6 @@ public class GameManager{
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
         bool canCapture = this.LegalCapture(pPosition, i);
-        Debug.Log(canMove);
-        Debug.Log(canCapture);
         bool selfChecked = false;
         bool isBlocked = false;
         int ownKingPosition;
@@ -204,7 +202,6 @@ public class GameManager{
             }
             return true;
         }
-        Debug.Log(canCapture);
         if(canCapture == true){
             if(p.GetType() != whiteKnight.GetType()){
                 isBlocked = this.BlockedPath(pPosition, i);
@@ -221,7 +218,6 @@ public class GameManager{
             return true;
         }
         else{
-            Debug.Log("Cant Move");
             return false;
         }
 
@@ -237,8 +233,6 @@ public class GameManager{
             else{
                 this.RandomPiece(0);
             }
-            // Debug.Log(whiteHand);
-            // Debug.Log(moveCount);
         }
         else if(nextState == GameState.BLACKPAWNS){
             if (this.moveCount < 2){
@@ -247,8 +241,6 @@ public class GameManager{
             else{
                 this.RandomPiece(1);
             }
-            Debug.Log(blackHand);
-            Debug.Log(moveCount);
         }
 
         gameState = nextState;
@@ -385,6 +377,7 @@ public class GameManager{
                         this.Board[id] = whiteHand[selectedPiece];
                         whiteHand.RemoveAt(selectedPiece);
                         this.moveCount ++;
+                        placed = false;
                     }
                     else{
                         this.gameState = GameState.WHITEPAWNS;
