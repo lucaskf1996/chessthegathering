@@ -41,7 +41,7 @@ public class GameManager{
     public GameState gameState { get; private set; }
     public int selectedTile = -1;
     private int initialPawns = 0;
-    public int selectedPiece;
+    public int selectedPiece = -1;
     private bool clickedHand = false;
     public static GameManager GetInstance()
     {
@@ -379,9 +379,9 @@ public class GameManager{
                     else{
                         placed = this.placePiece(whiteHand[selectedPiece], id);
                     }
+                    this.selectedTile = -1;
                     if(placed) {
                         this.ChangeState( GameState.BLACKPAWNS);
-                        this.selectedTile = -1;
                         this.Board[id] = whiteHand[selectedPiece];
                         whiteHand.RemoveAt(selectedPiece);
                         this.moveCount ++;
@@ -389,18 +389,18 @@ public class GameManager{
                     }
                     else{
                         this.gameState = GameState.WHITEPAWNS;
-                        this.selectedTile = -1;
                     }
+                    this.selectedPiece = -1;
                     break;
                 }
                 bool moved = this.MovePiece(this.selectedTile, id);
+                this.selectedTile = -1;
+                this.selectedPiece = -1;
                 if(moved){
                     this.ChangeState( GameState.BLACKPAWNS);
-                    this.selectedTile = -1;
                 }
                 else{
                     this.gameState = GameState.WHITEPAWNS;
-                    this.selectedTile = -1;
                 }
                 break;
             case (GameState.BLACKPAWNS):
@@ -422,29 +422,29 @@ public class GameManager{
                     else{
                         placed = this.placePiece(blackHand[selectedPiece], id);
                     }
+                    this.selectedTile = -1;
                     if(placed) {
                         this.ChangeState(GameState.WHITEPAWNS);
-                        this.selectedTile = -1;
                         this.Board[id] = blackHand[selectedPiece];
                         blackHand.RemoveAt(selectedPiece);
                         this.moveCount ++;
                     }
                     else{
                         this.gameState = GameState.BLACKPAWNS;
-                        this.selectedTile = -1;
                     }
+                    this.selectedPiece = -1;
                     break;
                 }
                 
                 moved = this.MovePiece(this.selectedTile, id);
+                this.selectedTile = -1;
+                this.selectedPiece = -1;
                 if(moved){
                     this.ChangeState(GameState.WHITEPAWNS);
-                    this.selectedTile = -1;
                     this.moveCount ++;
                 }
                 else{
                     this.gameState = GameState.BLACKPAWNS;
-                    this.selectedTile = -1;
                 }
                 break;
             default:
