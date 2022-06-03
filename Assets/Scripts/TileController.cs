@@ -185,11 +185,12 @@ public class TileController : MonoBehaviour
     void fillHands(){
         for(int i = 0; i < 8; i++){
             removeGlowHand(i);
-            if(gm.whiteHand[i] != null){
+            Debug.Log("white hand:  " + gm.whiteHand.Count);
+            if(i<=gm.whiteHand.Count-1){
                 if (i == gm.selectedPiece) setGlowHand(i,0); 
                 setSpriteHand(i, gm.whiteHand[i].spriteId, this.whiteId);
             } else clearSpriteHand(i, this.whiteId);
-            if(gm.blackHand[i] != null){
+            if(i == gm.blackHand.Count-1){
                 if (i == gm.selectedPiece) setGlowHand(i,1); 
                 setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
             } else clearSpriteHand(i, this.blackId);

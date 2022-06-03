@@ -41,7 +41,7 @@ public class GameManager{
     public GameState gameState { get; private set; }
     public int selectedTile = -1;
     private int initialPawns = 0;
-    private int selectedPiece;
+    public int selectedPiece;
     private bool clickedHand = false;
     public static GameManager GetInstance()
     {
@@ -230,20 +230,27 @@ public class GameManager{
     public void ChangeState(GameState nextState)
     {   
 
-        if(nextState == GameState.WHITEPAWNS)
+        if(nextState == GameState.WHITEPAWNS){
             if (this.moveCount < 2){
                 this.PawnHand(0);
             }
             else{
                 this.RandomPiece(0);
             }
-        else if(nextState == GameState.BLACKPAWNS)
+            // Debug.Log(whiteHand);
+            // Debug.Log(moveCount);
+        }
+        else if(nextState == GameState.BLACKPAWNS){
             if (this.moveCount < 2){
                 this.PawnHand(1);
             }
             else{
                 this.RandomPiece(1);
             }
+            Debug.Log(blackHand);
+            Debug.Log(moveCount);
+        }
+
         gameState = nextState;
     }
 
@@ -299,7 +306,7 @@ public class GameManager{
     public void RandomPiece(int id){
         if(id == 0){
             if(whiteHandSize < 8){
-                whiteHand.Add(whiteDeck.GetPiece(0));
+                whiteHand.Add(whiteDeck.GetPiece());
                 whiteHandSize++;
             }
             else{
@@ -308,7 +315,7 @@ public class GameManager{
         }
         else{
             if(blackHandSize < 8){
-                whiteHand.Add(whiteDeck.GetPieblackce(1));
+                blackHand.Add(blackDeck.GetPiece());
                 blackHandSize++;
             }
             else{
@@ -337,12 +344,12 @@ public class GameManager{
             return;
         }
         if(color == 1){
-            if(blackHand[tileID] == null){
+            if(blackHand.Count < tileID){
                 return;
             }
         }
         else{
-            if(whiteHand[tileID] == null){
+            if(whiteHand.Count < tileID){
                 return;
             } 
         }
@@ -375,7 +382,9 @@ public class GameManager{
                     if(placed) {
                         this.ChangeState( GameState.BLACKPAWNS);
                         this.selectedTile = -1;
-                        whiteHand[selectedPiece] = null;
+                        this.Board[id] = whiteHand[selectedPiece];
+                        whiteHand.RemoveAt(selectedPiece);
+                        this.moveCount ++;
                     }
                     else{
                         this.gameState = GameState.WHITEPAWNS;
@@ -407,7 +416,9 @@ public class GameManager{
                     if(placed) {
                         this.ChangeState(GameState.WHITEPAWNS);
                         this.selectedTile = -1;
-                        blackHand[selectedPiece] = null;
+                        this.Board[id] = blackHand[selectedPiece];
+                        blackHand.RemoveAt(selectedPiece);
+                        this.moveCount ++;
                     }
                     else{
                         this.gameState = GameState.BLACKPAWNS;
