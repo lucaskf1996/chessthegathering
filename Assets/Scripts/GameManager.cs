@@ -307,7 +307,7 @@ public class GameManager{
         }
     }
 
-    public void clickedTIle(int tileID, int color){
+    public void clickedTile(int tileID, int color){
         
     }
 
