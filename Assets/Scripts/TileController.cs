@@ -5,25 +5,42 @@ using UnityEngine;
 public class TileController : MonoBehaviour
 {
     private GameObject board;
+    private GameObject whiteHand;
+    private GameObject blackHand;
     public Sprite boardSprite;
+    public Sprite handSprite;
     public Sprite[] pieces; // Black -> White; King, Queen, Bishop, Knight, Rook, Pawn
     private List<GameObject> tiles;
+    private List<GameObject> whiteHandTiles;
+    private List<GameObject> blackHandTiles;
     private SpriteRenderer sprBoard;
+    private SpriteRenderer sprWhiteHand;
+    private SpriteRenderer sprBlackHand;
     public GameObject tilePrefab;
-
+    public GameObject handTilePrefab;
+    private int whiteId = 0;
+    private int blackId = 1;
     private Ray ray;
     private RaycastHit rht;
     private GameManager gm;
-    public bool _debugging = true;
+    public bool _debugging;
 
     void Start()
     {   
         gm = GameManager.GetInstance();
         gm.SetInitialPieces();
         this.board = new GameObject("Board");
+        this.whiteHand = new GameObject("whiteHand");
+        this.blackHand = new GameObject("blackHand");
         this.board.transform.localScale = new Vector3(0.5f, 0.5f, 0.0f);
+        this.whiteHand.transform.localScale = new Vector3(2f, 2f, 0.0f);
+        this.blackHand.transform.localScale = new Vector3(2f, 2f, 0.0f);
         this.sprBoard = this.board.AddComponent<SpriteRenderer>();
         this.sprBoard.sprite = this.boardSprite;
+        this.sprWhiteHand = this.whiteHand.AddComponent<SpriteRenderer>();
+        this.sprWhiteHand.sprite = this.handSprite;
+        this.sprBlackHand = this.blackHand.AddComponent<SpriteRenderer>();
+        this.sprBlackHand.sprite = this.handSprite;
 
         // Get dimensions
         float width, height;
@@ -33,9 +50,15 @@ public class TileController : MonoBehaviour
         Debug.Log("Height: " + height);
         float half_width = width/2f;
         float half_height = height/2f;
-        float xoff, yoff;
+        float xoff, yoff, whiteOffX, blackOffX;
         xoff = -half_width+width/16f;
         yoff = -half_height;
+        
+        whiteOffX = -half_width-(width/16f)*5;
+        blackOffX = -half_width-(width/16f)*3;
+
+        this.whiteHand.transform.position = new Vector3(-half_width-(width/16f)*4, 0f, 0.0f);
+        this.blackHand.transform.position = new Vector3(half_width+(width/16f)*4, 0f, 0.0f);
 
         int tileCount = 0;
         tiles = new List<GameObject>();
@@ -49,16 +72,44 @@ public class TileController : MonoBehaviour
                 tileCount ++;
             }
         }
+        int tileCountWhite = 0;
+        whiteHandTiles = new List<GameObject>();
+        blackHandTiles = new List<GameObject>();
+        for(float j = 6.5f; j>2.5f; j-=height/8f){
+            for(float i = 0f; i<2*width/8f; i+=width/8f){
+                GameObject w = Instantiate(handTilePrefab, new Vector3(i+whiteOffX, j+yoff, 0), Quaternion.identity);
+                w.transform.parent = this.whiteHand.transform;
+                whiteHandTiles.Add(w);
+                w.SendMessage("setId", tileCountWhite);
+                w.SendMessage("setColor", this.whiteId);
+                w.SendMessage("createInfoList");
+                w.SendMessage("setController", this.gameObject);
+
+                GameObject b = Instantiate(handTilePrefab, new Vector3(i-blackOffX, j+yoff, 0), Quaternion.identity);
+                b.transform.parent = this.blackHand.transform;
+                blackHandTiles.Add(b);
+                b.SendMessage("setId", tileCountWhite);
+                b.SendMessage("setColor", this.blackId);
+                b.SendMessage("createInfoList");
+                b.SendMessage("setController", this.gameObject);
+
+                tileCountWhite ++;
+            }
+        }
+
         if(this._debugging){
             gm.FillDefaultBoard();
         }
         this.fillBoard();
     }
-    void TileClicked(int id){
+    void TileClicked(int[] infoList){
         // Debug.Log(id);
         // this.setSprite(id, Random.Range(0,12));
-        this.gm.clickedTile(id);
+        int tileID = infoList[0];
+        int color = infoList[1];
+        this.gm.clickedTile(tileID, color);
         this.fillBoard();
+        this.fillHands();
     }
 
     void setSprite(int tileID, int spriteID){
@@ -66,8 +117,27 @@ public class TileController : MonoBehaviour
         this.tiles[tileID].GetComponent<SpriteRenderer>().sprite = this.pieces[spriteID];
     }
 
+    void setSpriteHand(int tileID, int spriteID, int hand){
+        // print(hand);
+        if(hand == 0){
+            this.whiteHandTiles[tileID].GetComponent<SpriteRenderer>().sprite = this.pieces[spriteID];
+        }
+        else{
+            this.blackHandTiles[tileID].GetComponent<SpriteRenderer>().sprite = this.pieces[spriteID];                
+        }
+    }
+
     void clearSprite(int tileId){
         this.tiles[tileId].GetComponent<SpriteRenderer>().sprite = null;
+    }
+
+    void clearSpriteHand(int tileId, int hand){
+        if(hand == 0){
+            this.whiteHandTiles[tileId].GetComponent<SpriteRenderer>().sprite = null;
+        }
+        else{
+            this.blackHandTiles[tileId].GetComponent<SpriteRenderer>().sprite = null;
+        }
     }
 
     void fillBoard(){
@@ -75,6 +145,17 @@ public class TileController : MonoBehaviour
             if(gm.Board[i] != null){
                 setSprite(i, gm.Board[i].spriteId);
             } else clearSprite(i);
+        }
+    }
+
+    void fillHands(){
+        for(int i = 0; i < 8; i++){
+            if(gm.whiteHand[i] != null){
+                setSpriteHand(i, gm.whiteHand[i].spriteId, this.whiteId);
+            } else clearSpriteHand(i, this.whiteId);
+            if(gm.blackHand[i] != null){
+                setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
+            } else clearSpriteHand(i, this.blackId);
         }
     }
 }

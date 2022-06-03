@@ -28,7 +28,10 @@ public class GameManager{
     public Pawn[] blackPawns =  new Pawn[8];
 
     public Deck whiteDeck, blackDeck;
-    public List<Piece> whiteHand, blackHand;
+    public Piece[] whiteHand = new Piece[8];
+    public Piece[] blackHand = new Piece[8];
+    public int whiteHandSize = 0;
+    public int blackHandSize = 0;
     public int playerTurn = 0;
     public Piece clickedPiece;
 
@@ -37,6 +40,8 @@ public class GameManager{
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
     private int selectedTile;
+    private int initialPawns = 0;
+
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -178,15 +183,23 @@ public class GameManager{
 
     public void ChangeState(GameState nextState)
     {
-        if(nextState == GameState.WHITEPAWNS){
-            PawnHand(0);
+        if(initialPawns<2){
+            if(nextState == GameState.WHITEPAWNS){
+                PawnHand(0);
+            }
+            if(nextState == GameState.BLACKPAWNS){
+                PawnHand(1);
+                initialPawns++;
+            }
         }
+        // else{
+        //     if
+        // }
         gameState = nextState;
     }
 
     private GameManager()
     {
-        gameState = GameState.WHITEPAWNS;
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
         for(int i = 0; i<8; i++){
@@ -195,7 +208,8 @@ public class GameManager{
         }
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
-
+        gameState = GameState.WHITEPAWNS;
+        // ChangeState(gameState);
     }
 
     public void FillDefaultBoard(){
@@ -221,25 +235,41 @@ public class GameManager{
             }
     }
 
+
+
     public void PawnHand(int id){
         if(id == 0){
-            whiteHand.Add(whiteDeck.getPawn(0));
+            whiteHand[whiteHandSize] = whiteDeck.getPawn(0);
+            whiteHandSize++;
         }
         else{
-            blackHand.Add(blackDeck.getPawn(1));
+            blackHand[blackHandSize] = blackDeck.getPawn(1);
+            blackHandSize++;
         }
     }
 
     public void RandomPiece(int id){
         if(id == 0){
-            whiteHand.Add(whiteDeck.GetPiece());
+            if(whiteHandSize < 8){
+                whiteHand[whiteHandSize] = whiteDeck.GetPiece();
+                whiteHandSize++;
+            }
+            else{
+                whiteDeck.GetPiece();
+            }
         }
         else{
-            blackHand.Add(blackDeck.GetPiece());
+            if(blackHandSize < 8){
+                blackHand[blackHandSize] = blackDeck.GetPiece();
+                blackHandSize++;
+            }
+            else{
+                blackDeck.GetPiece();
+            }
         }
     }
 
-    public void clickedTile(int id){
+    public void clickedTile(int id, int color){
         Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
         switch (this.gameState) {
             case (GameState.WHITEPAWNS):
@@ -304,8 +334,4 @@ public class GameManager{
                 break;
         }
     }
-
-    // public void PlaceCards(int id){
-        
-    // }
 }

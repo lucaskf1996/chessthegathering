@@ -220,6 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardSprite: {fileID: 21300000, guid: 0f14c88cb4681734a9d69324b6f4268b, type: 3}
+  handSprite: {fileID: 21300000, guid: 5bed63b2e41511a4abe4b88e70b42dde, type: 3}
   pieces:
   - {fileID: 21300000, guid: e09dd7ef81b191d448a7f0e23e292e9b, type: 3}
   - {fileID: 21300000, guid: f918d4ac07253394b83f437dd04254e6, type: 3}
@@ -234,6 +235,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0d2e0992818f7f24a842e03b202275c6, type: 3}
   - {fileID: 21300000, guid: 9653e0a8229b86841900d77ebea16167, type: 3}
   tilePrefab: {fileID: 616924081656989198, guid: be62ded8d41d446418cd762b8ccf4010, type: 3}
+  handTilePrefab: {fileID: 6931691549265403095, guid: 7a53453ce9dab424f98aaa006281866c, type: 3}
+  _debugging: 1
 --- !u!1 &1276611582
 GameObject:
   m_ObjectHideFlags: 0
