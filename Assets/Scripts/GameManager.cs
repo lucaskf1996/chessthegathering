@@ -33,6 +33,8 @@ public class GameManager{
     public int whiteHandSize = 0;
     public int blackHandSize = 0;
     public int moveCount = 0;
+    public int distanceTravelledBlack = 1;
+    public int distanceTravelledWhite = 1;
     public Piece clickedPiece;
 
     public Piece[] Board = new Piece[64];
@@ -156,12 +158,23 @@ public class GameManager{
                 if(Board[i]!=null){
                     if(Board[i].id != p.id){
                         canCapture = true;
-                        }
+                    }
                 }
             }
         }
         return canCapture;
     }
+
+    public void updateDistance(int position, Piece p){
+        if(p.id == 0){
+            distanceTravelledWhite = ((8-distanceTravelledWhite)*8>=position) ? distanceTravelledWhite+1 : distanceTravelledWhite;
+        }
+        else{
+            distanceTravelledBlack = (distanceTravelledBlack*8<position) ? distanceTravelledBlack+1 : distanceTravelledBlack;
+        }
+    }
+
+
     public bool MovePiece(int pPosition, int i){
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
@@ -199,6 +212,9 @@ public class GameManager{
                 this.Board[i] = null;
                 Debug.Log("SELF CHECKED");
                 return false;
+            }
+            if(p is King){
+                this.updateDistance(pPosition, p);
             }
             return true;
         }
@@ -318,11 +334,50 @@ public class GameManager{
 
 
     public bool placePiece(Piece p, int position){
-        if(Board[position] == null){
+        if(Board[position] == null && checkPlacingDistance(p, position)){
             Board[position] = p;
             return true;
         }
         else return false;
+    }
+
+    public bool checkPlacingDistance(Piece p, int position){
+        if(p is Pawn){
+            if(gameState == GameState.WHITEMOVE){
+                if(position>=32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{ // if(gameState == GameState.BLACKMOVE)
+                if(position<32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        else{
+            if(gameState == GameState.WHITEMOVE){
+                if(position>=8*(9-this.distanceTravelledWhite) && position>=32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{ // if(gameState == GameState.BLACKMOVE)
+                if(position<8*this.distanceTravelledBlack && position<32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
     }
 
     public void clickedTile(int tileID, int color){
