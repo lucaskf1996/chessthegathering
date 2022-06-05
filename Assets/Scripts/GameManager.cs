@@ -10,6 +10,7 @@ using System;
 public class GameManager{
     private static GameManager _instance;
     
+    private AudioSource PieceMove;
 
     public King whiteKing = new King(0);
     public King blackKing = new King(1);
@@ -30,21 +31,20 @@ public class GameManager{
     public Deck whiteDeck, blackDeck;
     public List<Piece> whiteHand = new List<Piece>(0);
     public List<Piece> blackHand = new List<Piece>(0);
-    public int whiteHandSize = 0;
-    public int blackHandSize = 0;
-    public int moveCount = 0;
-    public int distanceTravelledBlack = 1;
-    public int distanceTravelledWhite = 1;
+    public int whiteHandSize;
+    public int blackHandSize;
+    public int moveCount;
+    public int distanceTravelledBlack;
+    public int distanceTravelledWhite;
     public Piece clickedPiece;
 
     public Piece[] Board = new Piece[64];
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
-    public int selectedTile = -1;
-    private int initialPawns = 0;
-    public int selectedPiece = -1;
-    private bool clickedHand = false;
+    public int selectedTile;
+    public int selectedPiece;
+    private bool clickedHand;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -259,11 +259,29 @@ public class GameManager{
             }
         }
 
+        if(gameState ==GameState.BLACKMOVE && nextState == GameState.WHITEPAWNS){
+            PieceMove.Play();
+        }
+        else if(gameState ==GameState.WHITEMOVE && nextState == GameState.BLACKPAWNS){
+            PieceMove.Play();
+        }
+
         gameState = nextState;
     }
 
     private GameManager()
     {
+        whiteHandSize = 0;
+        blackHandSize = 0;
+        moveCount = 0;
+        distanceTravelledBlack = 1;
+        distanceTravelledWhite = 1;
+        selectedTile = -1;
+        selectedPiece = -1;
+        clickedHand = false;
+
+
+
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
         for(int i = 0; i<8; i++){
@@ -273,6 +291,7 @@ public class GameManager{
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
         // ChangeState(gameState);
+        PieceMove = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
 
     public void FillDefaultBoard(){
