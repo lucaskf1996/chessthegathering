@@ -39,7 +39,7 @@ public class GameManager{
     public Piece clickedPiece;
 
     public Piece[] Board = new Piece[64];
-    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
+    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE, ENDGAME}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
     public int selectedTile;
@@ -271,6 +271,10 @@ public class GameManager{
 
     private GameManager()
     {
+        SetStartingVariables();
+    }
+
+    private void SetStartingVariables(){
         whiteHandSize = 0;
         blackHandSize = 0;
         moveCount = 0;
@@ -279,8 +283,6 @@ public class GameManager{
         selectedTile = -1;
         selectedPiece = -1;
         clickedHand = false;
-
-
 
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
@@ -292,6 +294,7 @@ public class GameManager{
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
         // ChangeState(gameState);
         PieceMove = GameObject.Find("Main Camera").GetComponent<AudioSource>();
+        // this.ChangeState(GameState.WHITEPAWNS);
     }
 
     public void FillDefaultBoard(){
