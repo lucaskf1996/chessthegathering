@@ -35,7 +35,8 @@ public class Rook : Piece
         this.state = Piece.STATE.CAPTURED;
         this.position = -1;
     }
-        public bool canMove(Piece[] Board, int pPosition, int tPosition){
+
+    public bool canMove(Piece[] Board, int pPosition, int tPosition){
         int pColumn = pPosition % 8;
         int pLine = pPosition / 8;
         int tColumn = tPosition % 8;
@@ -43,15 +44,15 @@ public class Rook : Piece
         int colOffset = pColumn - tColumn;
         int lineOffset = pLine - tLine;
 
-        if((colOffset == 0) && (lineOffset == 0)) return false; //Same place
-        if(Math.Abs(colOffset) == Math.Abs(lineOffset)){ //Diagonal
-            return true;
+        if((colOffset == 0) && (lineOffset == 0)){
+            return false; //Same place
         }
-        if((colOffset == 0) || (lineOffset == 0)){ //Horizontal and Vertical
-            return true;
+        else if((colOffset == 0) || (lineOffset == 0)){
+            return true; //Horizontal and vertical
         }
-
-        return false;
+        else{
+            return false;
+        }
 
     }
 
