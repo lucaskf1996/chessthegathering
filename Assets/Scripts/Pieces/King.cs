@@ -22,7 +22,7 @@ public class King : Piece
         this.legalMoves.Add(8);
         this.legalMoves.Add(9);
         this.captureMoves = new List<int>(this.legalMoves);
-        this.position = -1; // Not in play yet        
+        this.position = -1; // Not in play yet
     }
 
     public void Capture(){

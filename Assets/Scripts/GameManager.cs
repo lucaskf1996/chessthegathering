@@ -9,7 +9,7 @@ using System;
 
 public class GameManager{
     private static GameManager _instance;
-    
+    private AudioSource PieceMove;
     public King whiteKing = new King(0);
     public King blackKing = new King(1);
     public King ownKing;
@@ -26,12 +26,14 @@ public class GameManager{
     public Deck whiteDeck, blackDeck;
     public List<Piece> whiteHand = new List<Piece>(0);
     public List<Piece> blackHand = new List<Piece>(0);
-    public int whiteHandSize = 0;
-    public int blackHandSize = 0;
-    public int moveCount = 0;
+    public int whiteHandSize;
+    public int blackHandSize;
+    public int moveCount;
+    public int distanceTravelledBlack;
+    public int distanceTravelledWhite;
     public Piece clickedPiece;
     public Piece[] Board = new Piece[64];
-    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
+    public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE, ENDGAME}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
     public int selectedTile = -1;
@@ -152,13 +154,23 @@ public class GameManager{
                 if(Board[i]!=null){
                     if(Board[i].id != p.id){
                         canCapture = true;
-                        }
+                    }
                 }
             }
         }
         return canCapture;
     }
-    
+
+    public void updateDistance(int position, Piece p){
+        if(p.id == 0){
+            distanceTravelledWhite = ((8-distanceTravelledWhite)*8>=position) ? distanceTravelledWhite+1 : distanceTravelledWhite;
+        }
+        else{
+            distanceTravelledBlack = (distanceTravelledBlack*8<position) ? distanceTravelledBlack+1 : distanceTravelledBlack;
+        }
+    }
+
+
     public bool MovePiece(int pPosition, int i){
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
@@ -197,6 +209,9 @@ public class GameManager{
                 Debug.Log("SELF CHECKED");
                 return false;
             }
+            if(p is King){
+                this.updateDistance(pPosition, p);
+            }
             return true;
         }
         if(canCapture == true){
@@ -233,11 +248,32 @@ public class GameManager{
             if (this.moveCount < 2) this.PawnHand(1);
             else this.RandomPiece(1);
         }
-        this.gameState = nextState;
+
+        if(gameState ==GameState.BLACKMOVE && nextState == GameState.WHITEPAWNS){
+            PieceMove.Play();
+        }
+        else if(gameState ==GameState.WHITEMOVE && nextState == GameState.BLACKPAWNS){
+            PieceMove.Play();
+        }
+
+        gameState = nextState;
     }
 
     private GameManager()
     {
+        SetStartingVariables();
+    }
+
+    private void SetStartingVariables(){
+        whiteHandSize = 0;
+        blackHandSize = 0;
+        moveCount = 0;
+        distanceTravelledBlack = 1;
+        distanceTravelledWhite = 1;
+        selectedTile = -1;
+        selectedPiece = -1;
+        clickedHand = false;
+
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
         for(int i = 0; i<8; i++){
@@ -247,6 +283,8 @@ public class GameManager{
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
         // ChangeState(gameState);
+        PieceMove = GameObject.Find("Main Camera").GetComponent<AudioSource>();
+        // this.ChangeState(GameState.WHITEPAWNS);
     }
 
     public void FillDefaultBoard(){
@@ -305,11 +343,50 @@ public class GameManager{
     }
 
     public bool placePiece(Piece p, int position){
-        if(Board[position] == null){
+        if(Board[position] == null && checkPlacingDistance(p, position)){
             Board[position] = p;
             return true;
         }
         else return false;
+    }
+
+    public bool checkPlacingDistance(Piece p, int position){
+        if(p is Pawn){
+            if(gameState == GameState.WHITEMOVE){
+                if(position>=32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{ // if(gameState == GameState.BLACKMOVE)
+                if(position<32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        else{
+            if(gameState == GameState.WHITEMOVE){
+                if(position>=8*(9-this.distanceTravelledWhite) && position>=32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{ // if(gameState == GameState.BLACKMOVE)
+                if(position<8*this.distanceTravelledBlack && position<32){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
     }
 
     public void clickedTile(int tileID, int color){

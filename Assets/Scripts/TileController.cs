@@ -20,7 +20,7 @@ public class TileController : MonoBehaviour
     private SpriteRenderer sprBlackHand;
     public GameObject tilePrefab;
     public GameObject handTilePrefab;
-    private int whiteId = 0;
+    private int whiteId = 0;    
     private int blackId = 1;
     private Ray ray;
     private RaycastHit rht;
