@@ -326,18 +326,18 @@ public class GameManager{
 
     public void RandomPiece(int id){
         if(id == 0){
-            if(whiteHandSize < 8){
+            if(whiteHand.Count < 8){
                 whiteHand.Add(whiteDeck.GetPiece());
-                whiteHandSize++;
+                // whiteHandSize++;
             }
             else{
                 whiteDeck.GetPiece();
             }
         }
         else{
-            if(blackHandSize < 8){
+            if(blackHand.Count < 8){
                 blackHand.Add(blackDeck.GetPiece());
-                blackHandSize++;
+                // blackHandSize++;
             }
             else{
                 blackDeck.GetPiece();
@@ -363,7 +363,7 @@ public class GameManager{
                     return false;
                 }
             }
-            else{ // if(gameState == GameState.BLACKMOVE)
+            else{ 
                 if(position<32){
                     return true;
                 }
@@ -374,7 +374,8 @@ public class GameManager{
         }
         else{
             if(gameState == GameState.WHITEMOVE){
-                if(position>=8*(9-this.distanceTravelledWhite) && position>=32){
+                Debug.Log(this.distanceTravelledWhite);
+                if(position>=8*(8-this.distanceTravelledWhite) && position>=32){
                     return true;
                 }
                 else{
