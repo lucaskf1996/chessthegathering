@@ -86,7 +86,7 @@ public class GameManager{
                 blockedPath = this.BlockedPath(i, kingPosition);
                 if(legalCap && !blockedPath){
                     kingInCheck = true;
-                    Debug.Log("CHECK");
+                    Debug.Log("SELF CHECK");
                 }
             }
         }
@@ -127,6 +127,7 @@ public class GameManager{
             }
             if(bIndex > 0 && bIndex < 63 ){
                 if(this.Board[lTile + i*path] != null){
+                    Debug.Log("BLOCKED PATH");
                     pathIsBlocked = true;
                 }
             }
@@ -154,6 +155,11 @@ public class GameManager{
             if(move == moveOffset){
                 if(Board[i]!=null){
                     if(Board[i].id != p.id){
+                        Debug.Log("BOARD P: " + pPosition);
+                        Debug.Log("KING P: " + i);
+                        Debug.Log("PIECE: " + p);
+                        Debug.Log("LEGAL CAPTURE");
+                        Debug.Log("MOVE:" + move);
                         canCapture = true;
                     }
                 }

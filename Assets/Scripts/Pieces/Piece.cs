@@ -18,4 +18,8 @@ public interface Piece
     public List<int> captureMoves {get;}
     public int position {get; set; }
     public void Capture();
+    public bool canMove(Piece Board[], int pPosition, int tPosition);
+    public bool canCapture(Piece Board[], int pPosition, int tPosition); 
+    public bool blockedPath(Piece Board[], int pPosition, int tPosition); 
+    public bool legalMovement(Piece Board[], int pPosition, int tPosition);
 }
