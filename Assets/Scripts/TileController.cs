@@ -27,6 +27,7 @@ public class TileController : MonoBehaviour
     private GameManager gm;
     public bool _debugging;
     public Text whiteClock, blackClock;
+    private bool timerStarted = false;
 
     void Start()
     {   
@@ -105,6 +106,55 @@ public class TileController : MonoBehaviour
             gm.FillDefaultBoard();
         }
         this.fillBoard();
+        // gm.startTimer();
+    }
+
+    private void Update() {
+        if (!gm.gameStarted) return; // Timer starts after first (white) piece moves
+        // If it's the first time, start timer and set flag to net reset it every time.
+        if (!this.timerStarted) {
+            gm.startTimer();
+            this.timerStarted = true;
+        }
+        int turn = gm.getTurn();
+        float minutes, seconds;
+        if (turn == 0){
+            // Fade black clock
+            whiteClock.CrossFadeAlpha(1f,0.15f,false);
+            blackClock.CrossFadeAlpha(0.3f,0.15f,false);
+            
+            // White clock ticks
+            if(gm.whiteTimer > 0){
+                gm.whiteTimer -= Time.deltaTime;
+                //timerText.color = Color.red;
+            } else {
+                gm.whiteTimer = 0f;
+                giveUpBtn();
+            }
+        } else {
+            // Fade white clock
+            whiteClock.CrossFadeAlpha(0.3f,0.15f,false);
+            blackClock.CrossFadeAlpha(1f,0.15f,false);
+            // Black clock ticks
+            if(gm.blackTimer > 0){
+                gm.blackTimer -= Time.deltaTime;
+                //timerText.color = Color.red;
+            } else {
+                gm.blackTimer = 0f;
+                giveUpBtn();
+            }
+        }
+        // Draw values
+        
+        // White
+        minutes = Mathf.FloorToInt(gm.whiteTimer / 60);
+        seconds = Mathf.FloorToInt(gm.whiteTimer % 60);
+        whiteClock.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        // Black
+        minutes = Mathf.FloorToInt(gm.blackTimer / 60);
+        seconds = Mathf.FloorToInt(gm.blackTimer % 60);
+        blackClock.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     void TileClicked(int tileID){
@@ -201,20 +251,14 @@ public class TileController : MonoBehaviour
     }
 
     public void giveUpBtn(){
-        if (gm.gameState == GameManager.GameState.BLACKPAWNS){
+        if (gm.gameState == GameManager.GameState.BLACKPAWNS || gm.gameState == GameManager.GameState.BLACKMOVE){
             Debug.Log("White Wins");
+            gm.reset();
             SceneManager.LoadScene("WhiteWins");
         }
-        if (gm.gameState == GameManager.GameState.BLACKMOVE){
-            Debug.Log("White Wins");
-            SceneManager.LoadScene("WhiteWins");
-        }
-        if (gm.gameState == GameManager.GameState.WHITEPAWNS){
+        if (gm.gameState == GameManager.GameState.WHITEPAWNS || gm.gameState == GameManager.GameState.WHITEMOVE){
             Debug.Log("Black Wins");
-            SceneManager.LoadScene("BlackWins");
-        }
-        if (gm.gameState == GameManager.GameState.WHITEMOVE){
-            Debug.Log("Black Wins");
+            gm.reset();
             SceneManager.LoadScene("BlackWins");
         }
     }

@@ -32,7 +32,7 @@ public class GameManager{
     public int distanceTravelledBlack;
     public int distanceTravelledWhite;
     public Piece clickedPiece;
-    public Piece[] Board = new Piece[64];
+    public Piece[] Board;
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE, ENDGAME}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
     public GameState gameState { get; private set; }
@@ -40,7 +40,8 @@ public class GameManager{
     private int initialPawns = 0;
     public int selectedPiece = -1;
     private bool clickedHand = false;
-    public int whiteTimer, blackTimer;
+    public float whiteTimer, blackTimer;
+    public bool gameStarted = false;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -170,7 +171,6 @@ public class GameManager{
         }
     }
 
-
     public bool MovePiece(int pPosition, int i){
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
@@ -237,9 +237,6 @@ public class GameManager{
     
     public void ChangeState(GameState nextState)
     {   
-        if (this.moveCount == 0){
-            if (nextState == GameState.WHITEPAWNS || nextState == GameState.BLACKPAWNS) this.startTimer();
-        }
         if(nextState == GameState.WHITEPAWNS){
             if (this.moveCount < 2) this.PawnHand(0);
             else this.RandomPiece(0);
@@ -273,6 +270,7 @@ public class GameManager{
         selectedTile = -1;
         selectedPiece = -1;
         clickedHand = false;
+        gameStarted = false;
 
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
@@ -285,6 +283,11 @@ public class GameManager{
         // ChangeState(gameState);
         PieceMove = GameObject.Find("Main Camera").GetComponent<AudioSource>();
         // this.ChangeState(GameState.WHITEPAWNS);
+        Board = new Piece[64];
+    }
+
+    public void reset(){
+        this.SetStartingVariables();
     }
 
     public void FillDefaultBoard(){
@@ -424,33 +427,32 @@ public class GameManager{
         // Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
         switch (this.gameState) {
             case (GameState.WHITEPAWNS):
-                if(this.Board[id] == null) return;
-                if (this.Board[id].id == 0){
+                if (this.Board[id] == null) return;
+                if (this.Board[id].id == 0) {
                     this.selectedTile = id;
                     this.ChangeState(GameState.WHITEMOVE);
                 }
                 break;
             case (GameState.WHITEMOVE):
-                if(clickedHand){
+                if (clickedHand) {
                     this.clickedHand = false;
                     int ownKingPosition = this.getOwnKingPosition(0);
                     bool selfChecked = this.SelfCheck(ownKingPosition);
                     bool placed = false;
-                    if(selfChecked){
+                    if (selfChecked) {
                         placed = false;
-                    }
-                    else{
+                    } else {
                         placed = this.placePiece(whiteHand[selectedPiece], id);
                     }
                     this.selectedTile = -1;
-                    if(placed) {
+                    if (placed) {
                         this.ChangeState( GameState.BLACKPAWNS);
                         this.Board[id] = whiteHand[selectedPiece];
                         whiteHand.RemoveAt(selectedPiece);
                         this.moveCount ++;
                         placed = false;
-                    }
-                    else{
+                        this.gameStarted = true;
+                    } else {
                         this.gameState = GameState.WHITEPAWNS;
                     }
                     this.selectedPiece = -1;
@@ -459,16 +461,16 @@ public class GameManager{
                 bool moved = this.MovePiece(this.selectedTile, id);
                 this.selectedTile = -1;
                 this.selectedPiece = -1;
-                if(moved){
+                if (moved) {
                     this.ChangeState( GameState.BLACKPAWNS);
-                }
-                else{
+                    this.gameStarted = true; // Only does anything the first time;
+                } else {
                     this.gameState = GameState.WHITEPAWNS;
                 }
                 break;
             case (GameState.BLACKPAWNS):
-                if(this.Board[id] == null) return;
-                if (this.Board[id].id == 1){
+                if (this.Board[id] == null) return;
+                if (this.Board[id].id == 1) {
                     this.selectedTile = id;
                     this.ChangeState(GameState.BLACKMOVE);
                 }
@@ -516,7 +518,12 @@ public class GameManager{
     }
 
     public void startTimer(){
-        this.whiteTimer = 300;
-        this.blackTimer = 300;
+        this.whiteTimer = 300.0f;
+        this.blackTimer = 300.0f;
+    }
+
+    public int getTurn(){
+        if(this.gameState == GameState.WHITEPAWNS || this.gameState == GameState.WHITEMOVE) return 0;
+        return 1;
     }
 }
