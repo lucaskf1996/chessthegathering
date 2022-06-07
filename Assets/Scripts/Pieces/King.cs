@@ -34,7 +34,7 @@ public class King : Piece
         this.state = Piece.STATE.CAPTURED;
         this.position = -1;
     }
-        public bool canMove(Piece[] Board, int pPosition, int tPosition){
+    public bool canMove(Piece[] Board, int pPosition, int tPosition){
         int pColumn = pPosition % 8;
         int pLine = pPosition / 8;
         int tColumn = tPosition % 8;
@@ -42,11 +42,7 @@ public class King : Piece
         int colOffset = pColumn - tColumn;
         int lineOffset = pLine - tLine;
 
-        if((colOffset == 0) && (lineOffset == 0)) return false; //Same place
-        if(Math.Abs(colOffset) == Math.Abs(lineOffset)){ //Diagonal
-            return true;
-        }
-        if((colOffset == 0) || (lineOffset == 0)){ //Horizontal and Vertical
+        if(((Math.Abs(colOffset)==1) || (Math.Abs(lineOffset) == 1)) && Math.Abs(lineOffset) <= 1 && Math.Abs(colOffset) <= 1){ //Horizontal and Vertical
             return true;
         }
 
