@@ -35,7 +35,7 @@ public class Bishop : Piece
         this.state = Piece.STATE.CAPTURED;
         this.position = -1;
     }
-        public bool canMove(Piece[] Board, int pPosition, int tPosition){
+    public bool canMove(Piece[] Board, int pPosition, int tPosition){
         int pColumn = pPosition % 8;
         int pLine = pPosition / 8;
         int tColumn = tPosition % 8;
@@ -47,10 +47,7 @@ public class Bishop : Piece
         if(Math.Abs(colOffset) == Math.Abs(lineOffset)){ //Diagonal
             return true;
         }
-        if((colOffset == 0) || (lineOffset == 0)){ //Horizontal and Vertical
-            return true;
-        }
-
+    
         return false;
 
     }

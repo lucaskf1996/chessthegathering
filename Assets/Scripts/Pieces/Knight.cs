@@ -42,63 +42,24 @@ public class Knight : Piece
         int lineOffset = pLine - tLine;
 
         if((colOffset == 0) && (lineOffset == 0)) return false; //Same place
-        if(Math.Abs(colOffset) == Math.Abs(lineOffset)){ //Diagonal
+        if((Math.Abs(colOffset) == 1) && (Math.Abs(lineOffset) == 2)){ // Sideways L
             return true;
         }
-        if((colOffset == 0) || (lineOffset == 0)){ //Horizontal and Vertical
+        if((Math.Abs(colOffset) == 2) && (Math.Abs(lineOffset) == 1)){ // Vertical L
             return true;
         }
-
         return false;
 
     }
 
     public bool blockedPath(Piece[] Board, int pPosition, int tPosition){
-        if(Board[tPosition]!= null){
-            if(this.id == Board[tPosition].id){
-                return true;
-            }
-        }
-        int path;
-        int hTile = Math.Max(pPosition, tPosition);
-        int lTile = Math.Min(pPosition, tPosition);
-        int bIndex;
-        path = hTile - lTile;
-
-        if(path % 9 == 0){
-            path = 9;
-        }
-        else if(path % 8 == 0)
-        {
-            path =8;
-        }
-        else if(path % 7 == 0){
-            path = 7;
-        }
-        else{
-            path = 1;
-        }
-        for(int i = 0; i < 8; i++){
-            bIndex = lTile+ i * path ;
-            if(bIndex == pPosition || bIndex > hTile || bIndex == tPosition){
-                continue;
-            }
-            if(bIndex > 0 && bIndex < 63 ){
-                if(Board[lTile + i*path] != null){
-                    Debug.Log("BLOCKED PATH");
-                    return true;
-                }
-            }
-        }
-        return false;
+        return false; // Can't block this
     }
 
     public bool canCapture(Piece[] Board, int pPosition, int tPosition){
         return(this.canMove(Board, pPosition, tPosition));
-
     }
     public bool legalMovement(Piece[] Board, int pPosition, int tPosition){
         return((this.canMove(Board, pPosition, tPosition) || this.canCapture(Board, pPosition, tPosition)) && !this.blockedPath(Board, pPosition, tPosition));
-
     }
 }
