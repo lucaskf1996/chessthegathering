@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TileController : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class TileController : MonoBehaviour
     private RaycastHit rht;
     private GameManager gm;
     public bool _debugging;
+    public Text whiteClock, blackClock;
 
     void Start()
     {   
@@ -194,6 +197,25 @@ public class TileController : MonoBehaviour
                 if (i == gm.selectedPiece) setGlowHand(i,1); 
                 setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
             } else clearSpriteHand(i, this.blackId);
+        }
+    }
+
+    public void giveUpBtn(){
+        if (gm.gameState == GameManager.GameState.BLACKPAWNS){
+            Debug.Log("White Wins");
+            SceneManager.LoadScene("WhiteWins");
+        }
+        if (gm.gameState == GameManager.GameState.BLACKMOVE){
+            Debug.Log("White Wins");
+            SceneManager.LoadScene("WhiteWins");
+        }
+        if (gm.gameState == GameManager.GameState.WHITEPAWNS){
+            Debug.Log("Black Wins");
+            SceneManager.LoadScene("BlackWins");
+        }
+        if (gm.gameState == GameManager.GameState.WHITEMOVE){
+            Debug.Log("Black Wins");
+            SceneManager.LoadScene("BlackWins");
         }
     }
 }

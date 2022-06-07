@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Game.unity
     guid: 2801703e5bec4284bac31ab4a641d4df
   - enabled: 1
-    path: Assets/Scenes/GameOver.unity
+    path: Assets/Scenes/WhiteWins.unity
     guid: 83f1aa2a27c71da47bc520c0d90a5d0d
+  - enabled: 1
+    path: Assets/Scenes/BlackWins.unity
+    guid: 9ab2e83fd2df6ac43aad976408387f84
   m_configObjects: {}

@@ -10,7 +10,6 @@ using System;
 public class GameManager{
     private static GameManager _instance;
     
-
     public King whiteKing = new King(0);
     public King blackKing = new King(1);
     public King ownKing;
@@ -22,11 +21,8 @@ public class GameManager{
     public Rook blackRook = new Rook(1);
     public Knight whiteKnight = new Knight(0);
     public Knight blackKnight = new Knight(1);
-
-
     public Pawn[] whitePawns =  new Pawn[8];
     public Pawn[] blackPawns =  new Pawn[8];
-
     public Deck whiteDeck, blackDeck;
     public List<Piece> whiteHand = new List<Piece>(0);
     public List<Piece> blackHand = new List<Piece>(0);
@@ -34,7 +30,6 @@ public class GameManager{
     public int blackHandSize = 0;
     public int moveCount = 0;
     public Piece clickedPiece;
-
     public Piece[] Board = new Piece[64];
     public enum GameState {WHITEPAWNS, BLACKPAWNS, WHITEHAND, BLACKHAND, WHITEMOVE, BLACKMOVE}; //n sei se vai ser assim ainda
     private GameObject WhiteHandTiles, BlackHandTiles;
@@ -43,6 +38,7 @@ public class GameManager{
     private int initialPawns = 0;
     public int selectedPiece = -1;
     private bool clickedHand = false;
+    public int whiteTimer, blackTimer;
     public static GameManager GetInstance()
     {
         if(_instance == null)
@@ -162,6 +158,7 @@ public class GameManager{
         }
         return canCapture;
     }
+    
     public bool MovePiece(int pPosition, int i){
         Piece p = this.Board[pPosition];
         bool canMove = this.LegalMovement(pPosition, i);
@@ -222,28 +219,21 @@ public class GameManager{
         }
 
     }
-
+    
     public void ChangeState(GameState nextState)
     {   
-
+        if (this.moveCount == 0){
+            if (nextState == GameState.WHITEPAWNS || nextState == GameState.BLACKPAWNS) this.startTimer();
+        }
         if(nextState == GameState.WHITEPAWNS){
-            if (this.moveCount < 2){
-                this.PawnHand(0);
-            }
-            else{
-                this.RandomPiece(0);
-            }
+            if (this.moveCount < 2) this.PawnHand(0);
+            else this.RandomPiece(0);
         }
         else if(nextState == GameState.BLACKPAWNS){
-            if (this.moveCount < 2){
-                this.PawnHand(1);
-            }
-            else{
-                this.RandomPiece(1);
-            }
+            if (this.moveCount < 2) this.PawnHand(1);
+            else this.RandomPiece(1);
         }
-
-        gameState = nextState;
+        this.gameState = nextState;
     }
 
     private GameManager()
@@ -282,8 +272,6 @@ public class GameManager{
             // }
     }
 
-
-
     public void PawnHand(int id){
         if(id == 0){
             whiteHand.Add(whiteDeck.getPawn(0));
@@ -315,7 +303,6 @@ public class GameManager{
             }
         }
     }
-
 
     public bool placePiece(Piece p, int position){
         if(Board[position] == null){
@@ -355,7 +342,6 @@ public class GameManager{
         }
         
     }
-
 
     public void clickedTile(int id){
         // Debug.Log(String.Format("Clicked tile {0} with state {1}", id, this.gameState.ToString()));
@@ -450,5 +436,10 @@ public class GameManager{
             default:
                 break;
         }
+    }
+
+    public void startTimer(){
+        this.whiteTimer = 300;
+        this.blackTimer = 300;
     }
 }
