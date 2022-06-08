@@ -204,12 +204,21 @@ public class TileController : MonoBehaviour
     }
 
     void fillBoard(){
+        Piece p = null;
+        if (gm.selectedTile != -1){
+            if (gm.Board[gm.selectedTile] != null){
+                p = gm.Board[gm.selectedTile];
+            }  
+        }
         for(int i = 0; i < 64; i++){
             removeGlow(i);
             if(gm.Board[i] != null){
-                if (i == gm.selectedTile) setGlow(i);  
+                // if (i == gm.selectedTile) setGlow(i);
                 setSprite(i, gm.Board[i].spriteId);
             } else clearSprite(i);
+            if (p != null) {
+                if(p.legalMovement(gm.Board, gm.selectedTile, i)) setGlow(i);
+            }
         }
     }
 
@@ -248,6 +257,21 @@ public class TileController : MonoBehaviour
                 setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
             } else clearSpriteHand(i, this.blackId);
         }
+
+        if (gm.selectedPiece != -1){
+            Piece p = null;
+            if (gm.getTurn()==0){
+                p = gm.whiteHand[gm.selectedPiece];
+            } else {
+                p = gm.blackHand[gm.selectedPiece];
+            }
+            if (p != null){
+                for(int i = 0; i < 64; i++){
+                    if (gm.canPlace(p, i)) setGlow(i);
+                }
+            }
+        }
+
     }
 
     public void giveUpBtn(){

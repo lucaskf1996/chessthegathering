@@ -248,11 +248,19 @@ public class GameManager{
     }
 
     public bool placePiece(Piece p, int position){
-        if(Board[position] == null && checkPlacingDistance(p, position)){
+        if(this.canPlace(p, position)){
             Board[position] = p;
             return true;
         }
-        else return false;
+        return false;
+    }
+
+    public bool canPlace(Piece p, int destination){
+        // Return true if is valid placement
+        return 
+        (this.Board[destination] == null)
+        &&
+        (checkPlacingDistance(p, destination));
     }
 
     public bool checkPlacingDistance(Piece p, int position){
