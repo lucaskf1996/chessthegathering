@@ -132,6 +132,8 @@ public class GameManager{
         // Else, make move permanent
         if (temp != null) temp.Capture();
         
+        if (p is King) updateDistance(i, p);
+
         return true;
     }
     
@@ -294,22 +296,34 @@ public class GameManager{
     }
 
     public void clickedTile(int tileID, int color){
+        // White turn; Clicked on black hand
         if(this.gameState == GameState.WHITEPAWNS && color == 1){
             this.clickedHand = false;
             return;
         } 
         
-        else if(this.gameState == GameState.BLACKPAWNS && color == 0){
+        // Black turn; Clicked on white hand
+        if(this.gameState == GameState.BLACKPAWNS && color == 0){
             this.clickedHand = false;
             return;
         }
+
+        // Cant move to hand
+        if(this.gameState == GameState.WHITEMOVE || this.gameState == GameState.BLACKMOVE){
+            this.clickedHand = false;
+            return;
+        }
+
+        Debug.Log("BlackCount: " + blackHand.Count);
+        Debug.Log("WhiteCount: " + whiteHand.Count);
+        Debug.Log("Id: " + tileID);
         if(color == 1){
-            if(blackHand.Count < tileID){
+            if(blackHand.Count <= tileID){
                 return;
             }
         }
         else{
-            if(whiteHand.Count < tileID){
+            if(whiteHand.Count <= tileID){
                 return;
             } 
         }

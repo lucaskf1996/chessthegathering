@@ -32,7 +32,7 @@ public class Pawn : Piece
         if(Board[tPosition] != null){
             return false;
         }
-        else if((Math.Abs(colOffset) == 0) && (lineOffset == ((this.id == 0) ? -1 : 1))){
+        if((Math.Abs(colOffset) == 0) && (lineOffset == ((this.id == 0) ? 1 : -1))){
             return true;
         }
         return false;
@@ -90,7 +90,7 @@ public class Pawn : Piece
         if(Board[tPosition] == null){
             return false;
         }
-        else if((Math.Abs(colOffset) == 1) && (lineOffset == ((this.id == 0) ? -1 : 1))){
+        else if((Math.Abs(colOffset) == 1) && (lineOffset == ((this.id == 0) ? 1 : -1))){
             return true;
         }
         return false;
