@@ -37,7 +37,8 @@ public class Pawn : Piece
         this.state = Piece.STATE.CAPTURED;
         this.position = -1;
     }
-        public bool canMove(Piece[] Board, int pPosition, int tPosition){
+
+    public bool canMove(Piece[] Board, int pPosition, int tPosition){
         int pColumn = pPosition % 8;
         int pLine = pPosition / 8;
         int tColumn = tPosition % 8;
@@ -45,14 +46,12 @@ public class Pawn : Piece
         int colOffset = pColumn - tColumn;
         int lineOffset = pLine - tLine;
 
-        if((colOffset == 0) && (lineOffset == 0)) return false; //Same place
-        if(Math.Abs(colOffset) == Math.Abs(lineOffset)){ //Diagonal
+        if(Board[tPosition] != null){
+            return false;
+        }
+        else if((Math.Abs(colOffset) == 0) && (lineOffset == ((this.id == 0) ? -1 : 1))){
             return true;
         }
-        if((colOffset == 0) || (lineOffset == 0)){ //Horizontal and Vertical
-            return true;
-        }
-
         return false;
 
     }
@@ -98,7 +97,20 @@ public class Pawn : Piece
     }
 
     public bool canCapture(Piece[] Board, int pPosition, int tPosition){
-        return(this.canMove(Board, pPosition, tPosition));
+        int pColumn = pPosition % 8;
+        int pLine = pPosition / 8;
+        int tColumn = tPosition % 8;
+        int tLine = tPosition / 8;
+        int colOffset = pColumn - tColumn;
+        int lineOffset = pLine - tLine;
+
+        if(Board[tPosition] == null){
+            return false;
+        }
+        else if((Math.Abs(colOffset) == 1) && (lineOffset == ((this.id == 0) ? -1 : 1))){
+            return true;
+        }
+        return false;
 
     }
     public bool legalMovement(Piece[] Board, int pPosition, int tPosition){
