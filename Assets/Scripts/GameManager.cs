@@ -91,6 +91,7 @@ public class GameManager{
                 }
             }
         }
+        return false;
     }
 
     public void updateDistance(int position, Piece p){
@@ -106,71 +107,32 @@ public class GameManager{
         Piece p = this.Board[pPosition];
         bool isLegal = p.legalMovement(this.Board, pPosition, i);
         if (!isLegal) return false;
-        
-        // Verify check
+        // Only legal moves are treated below, now to filter checks
 
-
-        return true;
-
-        // Old code for reference
-        /*
-        bool selfChecked = false;
-        int ownKingPosition;
-        int tempPosition;
-
-
-        if(canCapture){
-            canMove = false;
+        // Temporarily go to target position 
+        Piece temp;
+        if (this.Board[i] != null){
+            temp = this.Board[i];
+        } else {
+            temp = null;
         }
-        if(canMove == true){
-            if(p.GetType() != whiteKnight.GetType()){
-                isBlocked = this.BlockedPath(pPosition, i);
-            }
-            if(isBlocked == true){
-                return false;
-            }
-            // Move to opponent piece should not be allowed
-            if(this.Board[i] != null){
-                if (this.Board[i].id != p.id){
-                    return false;
-                }
-            }
-            this.Board[pPosition] = null;
-            tempPosition = pPosition;
-            pPosition = i;
-            this.Board[i] = p;
-            ownKingPosition = this.getOwnKingPosition(p.id);
-            selfChecked = this.SelfCheck(ownKingPosition);
-            if(selfChecked){
-                this.Board[tempPosition] = p;
-                this.Board[i] = null;
-                Debug.Log("SELF CHECKED");
-                return false;
-            }
-            if(p is King){
-                this.updateDistance(pPosition, p);
-            }
-            return true;
-        }
-        if(canCapture == true){
-            if(p.GetType() != whiteKnight.GetType()){
-                isBlocked = this.BlockedPath(pPosition, i);
-            }
-            if(isBlocked == true){
-                return false;
-            }
+        this.Board[i] = p;
+        this.Board[pPosition] = null;
 
-            //Arrumar isso aqui
-            this.Board[i].Capture();
-            this.Board[pPosition] = null;
-            pPosition = i;
-            this.Board[i] = p;
-            return true;
-        }
-        else{
+        // See if result board is in check
+        bool leadsToCheck = this.SelfCheck(this.getOwnKingPosition(p.id));
+
+        // If leadsToCheck undo move and return false;
+        if (leadsToCheck) {
+            this.Board[pPosition] = p;
+            this.Board[i] = temp;
             return false;
         }
-        */
+
+        // Else, make move permanent
+        if (temp != null) temp.Capture();
+        
+        return true;
     }
     
     public void ChangeState(GameState nextState)
@@ -184,10 +146,10 @@ public class GameManager{
             else this.RandomPiece(1);
         }
 
-        if(gameState ==GameState.BLACKMOVE && nextState == GameState.WHITEPAWNS){
+        if(gameState == GameState.BLACKMOVE && nextState == GameState.WHITEPAWNS){
             PieceMove.Play();
         }
-        else if(gameState ==GameState.WHITEMOVE && nextState == GameState.BLACKPAWNS){
+        else if(gameState == GameState.WHITEMOVE && nextState == GameState.BLACKPAWNS){
             PieceMove.Play();
         }
 
