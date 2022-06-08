@@ -75,97 +75,22 @@ public class GameManager{
 
     public bool SelfCheck(int kingPosition){
         bool kingInCheck = false;
-        bool legalCap = false;
-        bool blockedPath;
+        bool legalMovement = false;
+        Piece p;
         for(int i = 0; i < 64; i++){
-            if(this.Board[i]== null){
+            if(this.Board[i] == null || i==kingPosition){ // Skip empty positions and king (no suicide)
                 continue;
             }
             if(this.Board[i].id != this.Board[kingPosition].id){
-                legalCap = this.LegalCapture(i, kingPosition);
-                blockedPath = this.BlockedPath(i, kingPosition);
-                if(legalCap && !blockedPath){
+                p = this.Board[i];
+                legalMovement = p.legalMovement(this.Board, i, kingPosition);
+                if(legalMovement){
                     kingInCheck = true;
                     Debug.Log("SELF CHECK");
+                    return true;
                 }
             }
         }
-        return kingInCheck;
-    }
-
-    public bool BlockedPath(int pPosition, int target){
-        Piece p = this.Board[pPosition];
-        if(this.Board[target]!= null){
-            if(p.id == this.Board[target].id){
-                return true;
-            }
-        }
-        bool pathIsBlocked = false;
-        int path;
-        int hTile = Math.Max(pPosition, target);
-        int lTile = Math.Min(pPosition, target);
-        int bIndex;
-        path = hTile - lTile;
-
-        if(path % 9 == 0){
-            path = 9;
-        }
-        else if(path % 8 == 0)
-        {
-            path =8;
-        }
-        else if(path % 7 == 0){
-            path = 7;
-        }
-        else{
-            path = 1;
-        }
-        for(int i = 0; i < 8; i++){
-            bIndex = lTile+ i * path ;
-            if(bIndex == pPosition || bIndex > hTile || bIndex == target){
-                continue;
-            }
-            if(bIndex > 0 && bIndex < 63 ){
-                if(this.Board[lTile + i*path] != null){
-                    Debug.Log("BLOCKED PATH");
-                    pathIsBlocked = true;
-                }
-            }
-        }
-        return(pathIsBlocked);
-    }
-
-    public bool LegalMovement(int pPosition, int i){
-        bool canMove = false;
-        int moveOffset = i - pPosition;
-        Piece p = this.Board[pPosition];
-        foreach(int move in p.legalMoves){
-            if(move == moveOffset){
-                canMove = true;
-            }
-        }
-        return canMove;
-    }
-
-    public bool LegalCapture(int pPosition, int i){
-        int moveOffset = i - pPosition;
-        Piece p = this.Board[pPosition];
-        bool canCapture = false;
-        foreach(int move in p.captureMoves){
-            if(move == moveOffset){
-                if(Board[i]!=null){
-                    if(Board[i].id != p.id){
-                        Debug.Log("BOARD P: " + pPosition);
-                        Debug.Log("KING P: " + i);
-                        Debug.Log("PIECE: " + p);
-                        Debug.Log("LEGAL CAPTURE");
-                        Debug.Log("MOVE:" + move);
-                        canCapture = true;
-                    }
-                }
-            }
-        }
-        return canCapture;
     }
 
     public void updateDistance(int position, Piece p){
@@ -179,10 +104,17 @@ public class GameManager{
 
     public bool MovePiece(int pPosition, int i){
         Piece p = this.Board[pPosition];
-        bool canMove = this.LegalMovement(pPosition, i);
-        bool canCapture = this.LegalCapture(pPosition, i);
+        bool isLegal = p.legalMovement(this.Board, pPosition, i);
+        if (!isLegal) return false;
+        
+        // Verify check
+
+
+        return true;
+
+        // Old code for reference
+        /*
         bool selfChecked = false;
-        bool isBlocked = false;
         int ownKingPosition;
         int tempPosition;
 
@@ -238,7 +170,7 @@ public class GameManager{
         else{
             return false;
         }
-
+        */
     }
     
     public void ChangeState(GameState nextState)

@@ -14,9 +14,6 @@ public interface Piece
     public int id {get; set; }
     public int spriteId {get; set; }
     public STATE state {get; set; }
-    public List<int> legalMoves {get;}
-    public List<int> captureMoves {get;}
-    public int position {get; set; }
     public void Capture();
     public bool canMove(Piece[] Board, int pPosition, int tPosition);
     public bool canCapture(Piece[] Board, int pPosition, int tPosition); 
