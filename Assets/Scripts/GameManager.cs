@@ -9,7 +9,7 @@ using System;
 
 public class GameManager{
     private static GameManager _instance;
-    private AudioSource PieceMove;
+    private AudioSource PieceMove, FailMove;
     public King whiteKing = new King(0);
     public King blackKing = new King(1);
     public King ownKing;
@@ -183,7 +183,8 @@ public class GameManager{
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
         // ChangeState(gameState);
-        PieceMove = GameObject.Find("Main Camera").GetComponent<AudioSource>();
+        PieceMove = GameObject.Find("Main Camera").GetComponents<AudioSource>()[0];
+        FailMove = GameObject.Find("Main Camera").GetComponents<AudioSource>()[1];
         // this.ChangeState(GameState.WHITEPAWNS);
         Board = new Piece[64];
     }
@@ -322,9 +323,9 @@ public class GameManager{
             return;
         }
 
-        Debug.Log("BlackCount: " + blackHand.Count);
-        Debug.Log("WhiteCount: " + whiteHand.Count);
-        Debug.Log("Id: " + tileID);
+        // Debug.Log("BlackCount: " + blackHand.Count);
+        // Debug.Log("WhiteCount: " + whiteHand.Count);
+        // Debug.Log("Id: " + tileID);
         if(color == 1){
             if(blackHand.Count <= tileID){
                 return;
@@ -376,6 +377,7 @@ public class GameManager{
                         placed = false;
                         this.gameStarted = true;
                     } else {
+                        this.FailMove.Play();
                         this.gameState = GameState.WHITEPAWNS;
                     }
                     this.selectedPiece = -1;
@@ -388,6 +390,7 @@ public class GameManager{
                     this.ChangeState( GameState.BLACKPAWNS);
                     this.gameStarted = true; // Only does anything the first time;
                 } else {
+                    this.FailMove.Play();
                     this.gameState = GameState.WHITEPAWNS;
                 }
                 break;
@@ -418,6 +421,7 @@ public class GameManager{
                         this.moveCount ++;
                     }
                     else{
+                        this.FailMove.Play();
                         this.gameState = GameState.BLACKPAWNS;
                     }
                     this.selectedPiece = -1;
@@ -431,7 +435,8 @@ public class GameManager{
                     this.ChangeState(GameState.WHITEPAWNS);
                     this.moveCount ++;
                 }
-                else{
+                else {
+                    this.FailMove.Play();
                     this.gameState = GameState.BLACKPAWNS;
                 }
                 break;
