@@ -317,11 +317,23 @@ public class GameManager{
             return;
         }
 
-        // Cant move to hand
-        if(this.gameState == GameState.WHITEMOVE || this.gameState == GameState.BLACKMOVE){
+        // Cant move to white hand
+        if(this.gameState == GameState.WHITEMOVE){
             this.clickedHand = false;
+            this.selectedPiece = -1;
+            this.gameState = GameState.WHITEPAWNS;
             return;
         }
+
+        // Cant move to black hand
+        if(this.gameState == GameState.BLACKMOVE){
+            this.clickedHand = false;
+            this.selectedPiece = -1;
+            this.gameState = GameState.BLACKPAWNS;
+            return;
+        }
+
+
 
         // Debug.Log("BlackCount: " + blackHand.Count);
         // Debug.Log("WhiteCount: " + whiteHand.Count);
