@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 using System;
 
 
-
-
 public class GameManager{
     private static GameManager _instance;
     private AudioSource PieceMove, FailMove;
@@ -136,7 +134,7 @@ public class GameManager{
 
         return true;
     }
-    
+
     public void ChangeState(GameState nextState)
     {   
         if(nextState == GameState.WHITEPAWNS){
@@ -183,8 +181,8 @@ public class GameManager{
         whiteDeck = new Deck(whitePawns, whiteBishop, whiteQueen, whiteRook, whiteKnight);
         blackDeck = new Deck(blackPawns, blackBishop, blackQueen, blackRook, blackKnight);
         // ChangeState(gameState);
-        PieceMove = GameObject.Find("Main Camera").GetComponents<AudioSource>()[0];
-        FailMove = GameObject.Find("Main Camera").GetComponents<AudioSource>()[1];
+        PieceMove = GameObject.Find("GameManager").GetComponents<AudioSource>()[0];
+        FailMove = GameObject.Find("GameManager").GetComponents<AudioSource>()[1];
         // this.ChangeState(GameState.WHITEPAWNS);
         Board = new Piece[64];
     }
@@ -454,4 +452,5 @@ public class GameManager{
         if(this.gameState == GameState.WHITEPAWNS || this.gameState == GameState.WHITEMOVE) return 0;
         return 1;
     }
+
 }
