@@ -157,6 +157,12 @@ public class TileController : MonoBehaviour
         blackClock.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    // private void LateUpdate() {
+    //     if (!gm.gameStarted) return;
+    //     this.fillBoard();
+    //     this.fillHands();
+    // }
+
     void TileClicked(int tileID){
         // Debug.Log(id);
         // this.setSprite(id, Random.Range(0,12));
@@ -250,10 +256,12 @@ public class TileController : MonoBehaviour
             // Debug.Log("white hand:  " + gm.whiteHand.Count);
             if(i <= gm.whiteHand.Count-1){
                 if (i == gm.selectedPiece && (gm.getTurn()==0)) setGlowHand(i,0); 
+                // Debug.Log(gm.whiteHand[i]);
                 setSpriteHand(i, gm.whiteHand[i].spriteId, this.whiteId);
             } else clearSpriteHand(i, this.whiteId);
             if(i <= gm.blackHand.Count-1){
                 if (i == gm.selectedPiece && (gm.getTurn()==1)) setGlowHand(i,1); 
+                // Debug.Log(gm.whiteHand[i]);
                 setSpriteHand(i, gm.blackHand[i].spriteId, this.blackId);
             } else clearSpriteHand(i, this.blackId);
         }

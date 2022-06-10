@@ -24,8 +24,8 @@ public class GameManager{
     public Pawn[] whitePawns =  new Pawn[8];
     public Pawn[] blackPawns =  new Pawn[8];
     public Deck whiteDeck, blackDeck;
-    public List<Piece> whiteHand = new List<Piece>(0);
-    public List<Piece> blackHand = new List<Piece>(0);
+    public List<Piece> whiteHand;
+    public List<Piece> blackHand;
     public int whiteHandSize;
     public int blackHandSize;
     public int moveCount;
@@ -174,9 +174,12 @@ public class GameManager{
         clickedHand = false;
         gameStarted = false;
 
+        whiteHand = new List<Piece>(0);
+        blackHand = new List<Piece>(0);
+
         WhiteHandTiles = GameObject.Find("WhiteHand");
         BlackHandTiles = GameObject.Find("BlackHand");
-        for(int i = 0; i<8; i++){
+        for(int i = 0; i<6; i++){
             whitePawns[i] = new Pawn(0);
             blackPawns[i] = new Pawn(1);
         }
@@ -308,18 +311,23 @@ public class GameManager{
         // White turn; Clicked on black hand
         if(this.gameState == GameState.WHITEPAWNS && color == 1){
             this.clickedHand = false;
+            this.selectedTile = -1;
+            this.selectedPiece = -1;
             return;
         } 
         
         // Black turn; Clicked on white hand
         if(this.gameState == GameState.BLACKPAWNS && color == 0){
             this.clickedHand = false;
+            this.selectedTile = -1;
+            this.selectedPiece = -1;
             return;
         }
 
         // Cant move to white hand
         if(this.gameState == GameState.WHITEMOVE){
             this.clickedHand = false;
+            this.selectedTile = -1;
             this.selectedPiece = -1;
             this.gameState = GameState.WHITEPAWNS;
             return;
@@ -328,6 +336,7 @@ public class GameManager{
         // Cant move to black hand
         if(this.gameState == GameState.BLACKMOVE){
             this.clickedHand = false;
+            this.selectedTile = -1;
             this.selectedPiece = -1;
             this.gameState = GameState.BLACKPAWNS;
             return;
@@ -356,7 +365,6 @@ public class GameManager{
         else{
             this.ChangeState(GameState.BLACKMOVE);
         }
-        
     }
 
     public void clickedTile(int id){
@@ -380,7 +388,6 @@ public class GameManager{
                     } else {
                         placed = this.placePiece(whiteHand[selectedPiece], id);
                     }
-                    this.selectedTile = -1;
                     if (placed) {
                         this.ChangeState( GameState.BLACKPAWNS);
                         this.Board[id] = whiteHand[selectedPiece];
@@ -392,12 +399,11 @@ public class GameManager{
                         this.FailMove.Play();
                         this.gameState = GameState.WHITEPAWNS;
                     }
+                    this.selectedTile = -1;
                     this.selectedPiece = -1;
                     break;
                 }
                 bool moved = this.MovePiece(this.selectedTile, id);
-                this.selectedTile = -1;
-                this.selectedPiece = -1;
                 if (moved) {
                     this.ChangeState( GameState.BLACKPAWNS);
                     this.gameStarted = true; // Only does anything the first time;
@@ -405,6 +411,8 @@ public class GameManager{
                     this.FailMove.Play();
                     this.gameState = GameState.WHITEPAWNS;
                 }
+                this.selectedTile = -1;
+                this.selectedPiece = -1;
                 break;
             case (GameState.BLACKPAWNS):
                 if (this.Board[id] == null) return;
@@ -425,7 +433,6 @@ public class GameManager{
                     else{
                         placed = this.placePiece(blackHand[selectedPiece], id);
                     }
-                    this.selectedTile = -1;
                     if(placed) {
                         this.ChangeState(GameState.WHITEPAWNS);
                         this.Board[id] = blackHand[selectedPiece];
@@ -436,13 +443,12 @@ public class GameManager{
                         this.FailMove.Play();
                         this.gameState = GameState.BLACKPAWNS;
                     }
+                    this.selectedTile = -1;
                     this.selectedPiece = -1;
                     break;
                 }
                 
                 moved = this.MovePiece(this.selectedTile, id);
-                this.selectedTile = -1;
-                this.selectedPiece = -1;
                 if(moved){
                     this.ChangeState(GameState.WHITEPAWNS);
                     this.moveCount ++;
@@ -451,6 +457,8 @@ public class GameManager{
                     this.FailMove.Play();
                     this.gameState = GameState.BLACKPAWNS;
                 }
+                this.selectedTile = -1;
+                this.selectedPiece = -1;
                 break;
             default:
                 break;
